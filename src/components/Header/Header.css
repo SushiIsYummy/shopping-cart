@@ -1,0 +1,80 @@
+header {
+}
+
+h1.store-name {
+  font-size: 2rem;
+  background-color: red;
+  background-image: linear-gradient(red, yellow);
+  padding: 0 5px;
+  color: rgb(0, 0, 0);
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: black;
+}
+
+nav .main-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+nav .main-nav a {
+  font-size: 1.2rem;
+  color: white;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  color: black;
+}
+
+.shopping-cart {
+  width: 30px;
+  height: 20px;
+  cursor: pointer;
+}
+
+form {
+  display: flex;
+  height: 50px;
+  background-color: black;
+  padding: 10px;
+}
+
+input[type='text'] {
+  border: none;
+  outline: none;
+  padding: 0 5px;
+  flex: 1;
+}
+
+button[type='submit'] {
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #00bfff;
+}
+
+.reset-button-container {
+  display: flex;
+  align-items: center;
+  background-color: white;
+}
+
+button.reset {
+  border: none;
+  background-color: white;
+  margin-right: 5px;
+}
+
+button.reset i:hover {
+  cursor: pointer;
+}
