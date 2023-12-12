@@ -1,21 +1,38 @@
-.featured-anime-gif {
+.home {
+  padding: 10px;
+}
+
+.featured-anime-and-manga h1 {
+  font-size: 1.8rem;
+}
+.featured-anime,
+.featured-manga {
   position: relative;
   margin-bottom: 10px;
 }
 
-.featured-anime-gif h1 {
+.featured-anime a,
+.featured-manga a {
   position: absolute;
-  font-size: 1.1rem;
-  background-color: rgb(143, 143, 143, 0.3);
-  color: black;
-}
-
-.featured-anime-gif h1 a {
-  color: black;
+  bottom: 0;
+  font-size: 1.5rem;
+  background-color: rgba(109, 109, 109, 0.5);
+  color: white;
   text-decoration: underline;
 }
 
-.featured-anime-gif img {
+.featured-anime a:visited,
+.featured-manga a:visited {
+  color: white;
+}
+
+/* .featured-manga a {
+  background-color: rgb(143, 143, 143, 0.3);
+  color: white;
+} */
+
+.featured-anime img,
+.featured-manga img {
   display: block;
   width: 100%;
   object-fit: cover;
@@ -66,4 +83,65 @@
 .anime-manga-container.berserk .name,
 .anime-manga-container.berserk .name a {
   color: black;
+}
+
+@media screen and (width >= 768px) {
+  .home {
+    margin: 0 50px;
+  }
+
+  .popular-anime-and-manga {
+    display: flex;
+  }
+
+  .anime-manga-container.berserk {
+    flex: 5;
+  }
+
+  .popular-anime-and-manga {
+    flex-direction: row;
+    gap: 5px;
+  }
+
+  .popular-anime-and-manga .right-side {
+    flex: 7;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .right-side .anime-manga-container {
+    flex: 1;
+  }
+  .anime-manga-container.death-note img,
+  .anime-manga-container.aot img,
+  .anime-manga-container.berserk img {
+    max-height: none;
+    aspect-ratio: auto;
+  }
+}
+
+@media screen and (width >= 1000px) {
+  .home {
+    margin: 0 100px;
+  }
+}
+
+@media screen and (width > 1200px) {
+  .anime-and-manga-showcase {
+    display: flex;
+    gap: 10px;
+  }
+
+  .featured-anime-and-manga {
+    flex: 1;
+    order: 2;
+  }
+
+  .popular-anime-and-manga-container {
+    flex-basis: 62.8%;
+    order: 1;
+    border-right: 1px solid gray;
+    padding-right: 10px;
+  }
 }

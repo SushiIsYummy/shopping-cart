@@ -6,6 +6,11 @@ import './Home.css';
 import { getCurrentSeason, getNewSeasonalAnimeList, getNewSeasonalMangaList } from '../../api';
 import { DateTime } from 'luxon';
 import { Link } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper/modules';
+import { useState } from 'react';
+import { useMediaQuery } from '@react-hook/media-query';
+// SwiperCore.use([Autoplay]);
 
 export async function loader() {
   const anime = await getNewSeasonalAnimeList();
@@ -18,16 +23,55 @@ export async function action() {
 }
 
 function Home() {
+  const useSwiper = useMediaQuery('(max-width: 1200px)');
   const { anime, manga } = useLoaderData();
   const currentSeason = getCurrentSeason();
   const currentYear = DateTime.local().year;
-  console.log('hi')
   return (
-    <>
-      <section className="featured-anime-and-manga">
-        <div className="featured-anime-gif">
-          <h1>Featured Anime - <Link>Samurai Champloo</Link></h1>
-          <img src='/samurai-champloo-fight.gif'></img>
+    <div className='home'>
+      <section className="anime-and-manga-showcase">
+        <div className="featured-anime-and-manga">
+          {useSwiper ? ( 
+            <>
+              <Swiper
+                navigation={true}
+                loop={true}
+                autoplay= {{
+                  delay: 5000,
+                  disableOnInteraction: false
+                }}
+                modules={[Autoplay]}
+                >
+                <SwiperSlide>
+                  <h1>Featured Anime</h1>
+                  <div className="featured-anime">
+                    <Link>Samurai Champloo</Link>
+                    <img src='/samurai-champloo-fight.gif'></img>
+                  </div>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <h1>Featured Manga</h1>
+                  <div className="featured-manga">
+                    <Link>One Punch Man</Link>
+                    <img src='/one-punch-man.jpeg'></img>
+                  </div>
+                </SwiperSlide>
+              </Swiper>
+            </>
+          ) : (
+            <>
+              <h1>Featured Anime</h1>
+              <div className="featured-anime">
+                <Link>Samurai Champloo</Link>
+                <img src='/samurai-champloo-fight.gif'></img>
+              </div>
+              <h1>Featured Manga</h1>
+              <div className="featured-manga">
+                <Link>One Punch Man</Link>
+                <img src='/one-punch-man.jpeg'></img>
+              </div>
+            </>
+          )}
         </div>
         <div className="popular-anime-and-manga-container">
           <h1>Popular Anime and Manga</h1>
@@ -51,7 +95,7 @@ function Home() {
       </section>
       <Carousel productList={anime} headerTitle={`New ${currentSeason} Anime ${currentYear}`}/>
       <Carousel productList={manga} headerTitle={`New ${currentSeason} Manga ${currentYear}`}/>
-    </>
+    </div>
   )
 }
 

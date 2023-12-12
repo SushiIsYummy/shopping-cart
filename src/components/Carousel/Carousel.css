@@ -1,5 +1,5 @@
 .carousel {
-  padding: 10px;
+  padding: 10px 0;
 }
 
 .swooper {
@@ -19,19 +19,6 @@
   opacity: 1;
   transition: left 0.15s ease-out;
   background-color: rgb(0, 0, 0, 0.8);
-}
-
-.swooper:hover .navigation-buttons .custom-prev-icon.swiper-button-disabled {
-  opacity: 0.2 !important;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-  background-color: #007bff;
-  color: #fff;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 .custom-next-icon,
