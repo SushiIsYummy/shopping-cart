@@ -1,0 +1,69 @@
+.featured-anime-gif {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.featured-anime-gif h1 {
+  position: absolute;
+  font-size: 1.1rem;
+  background-color: rgb(143, 143, 143, 0.3);
+  color: black;
+}
+
+.featured-anime-gif h1 a {
+  color: black;
+  text-decoration: underline;
+}
+
+.featured-anime-gif img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  aspect-ratio: 50 / 25;
+}
+
+.popular-anime-and-manga-container > h1 {
+  font-size: 1.8rem;
+}
+
+.popular-anime-and-manga {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.popular-anime-and-manga .right-side {
+}
+
+.anime-manga-container.berserk img,
+.anime-manga-container.death-note img,
+.anime-manga-container.aot img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  max-height: 300px;
+  aspect-ratio: 55 / 25;
+}
+
+.anime-manga-container {
+  position: relative;
+}
+
+.anime-manga-container .name {
+  position: absolute;
+  font-size: 1.1rem;
+  bottom: 0;
+  background-color: rgb(143, 143, 143, 0.3);
+  color: rgb(255, 255, 255);
+  padding: 4px 2px;
+}
+
+.anime-manga-container .name a {
+  color: rgb(255, 255, 255);
+  text-decoration: underline;
+}
+
+.anime-manga-container.berserk .name,
+.anime-manga-container.berserk .name a {
+  color: black;
+}

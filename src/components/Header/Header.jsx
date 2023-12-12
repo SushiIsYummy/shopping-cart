@@ -4,11 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 import { 
   Form,
+  Outlet,
   NavLink,
 } from "react-router-dom";
+
 function Header() {
   const [searchInput, setSearchInput] = useState('');
-  
+
   return (
     <>
       <header>
@@ -42,6 +44,9 @@ function Header() {
 
         </Form>
       </header>
+      <main>
+        <Outlet />
+      </main>
     </>
   )
 }

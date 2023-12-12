@@ -1,0 +1,75 @@
+.carousel {
+  padding: 10px;
+}
+
+.swooper {
+  position: relative;
+  overflow: hidden;
+}
+
+.swooper:hover .custom-next-icon:not(.swiper-button-disabled) {
+  right: 0;
+  opacity: 1;
+  transition: right 0.15s ease-out;
+  background-color: rgb(0, 0, 0, 0.8);
+}
+
+.swooper:hover .custom-prev-icon:not(.swiper-button-disabled) {
+  left: 0;
+  opacity: 1;
+  transition: left 0.15s ease-out;
+  background-color: rgb(0, 0, 0, 0.8);
+}
+
+.swooper:hover .navigation-buttons .custom-prev-icon.swiper-button-disabled {
+  opacity: 0.2 !important;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.custom-next-icon,
+.custom-prev-icon {
+  color: white;
+  position: absolute;
+  top: 50%;
+  padding: 0 10px;
+  transform: translateY(-50%);
+  z-index: 1;
+  transition: background-color 0.15s;
+}
+
+.custom-prev-icon {
+  left: -40px;
+  opacity: 1;
+  transition: opacity 0.15s ease-in;
+  transition: left 0.15s ease-in;
+  background-color: rgb(0, 0, 0, 0.8);
+}
+
+.custom-next-icon {
+  right: -40px;
+  opacity: 1;
+  transition: opacity 0.15s ease-in;
+  transition: right 0.15s ease-in;
+  background-color: rgb(0, 0, 0, 0.8);
+}
+
+.custom-prev-icon:hover,
+.custom-next-icon:hover {
+  cursor: pointer;
+}
+
+.custom-prev-icon:not(.swiper-button-disabled):hover + .custom-next-icon {
+  right: -40px;
+}
+
+.swooper .navigation-buttons .custom-prev-icon.hide {
+  left: -40px;
+}

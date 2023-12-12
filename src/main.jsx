@@ -4,12 +4,13 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Home from './pages/Home';
+import Home from './pages/Home/Home';
 import './index.css'
 import Header from './components/Header/Header';
 import ErrorPage from './pages/ErrorPage';
 import Shop from './pages/Shop';
 import Cart from './pages/Cart';
+import { loader as HomeLoader } from './pages/Home/Home';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+        loader: HomeLoader,
         children: [
           {
             path: 'shop',
