@@ -1,16 +1,21 @@
-.product-small {
+.product-image {
   position: relative;
   aspect-ratio: 727 / 1000;
+  cursor: pointer;
 }
 
-.product-small img {
+.product-image:hover {
+  opacity: 0.8;
+}
+
+.product-image img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.product-small h1.title {
+.product-image h1.title {
   position: absolute;
   bottom: 0;
   padding: 0 3px;

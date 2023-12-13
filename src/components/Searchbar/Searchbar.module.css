@@ -1,0 +1,38 @@
+.searchBar {
+  display: flex;
+  height: 55px;
+  width: 100%;
+  background-color: black;
+  padding: 10px;
+}
+
+.searchInput {
+  border: none;
+  outline: none;
+  padding: 0 5px;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.submitButton {
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #00bfff;
+}
+
+.resetButtonContainer {
+  display: flex;
+  align-items: center;
+  background-color: white;
+}
+
+.resetButton {
+  border: none;
+  background-color: white;
+  margin-right: 5px;
+}
+
+.resetButton i:hover {
+  cursor: pointer;
+}

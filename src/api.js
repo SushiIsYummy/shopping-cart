@@ -20,6 +20,17 @@ export async function getNewSeasonalMangaList() {
   return json;
 }
 
+export async function getAnimeInfo(animeId) {
+  const response = await fetch(`${baseUrl}/anime/${animeId}`);
+  const json = await response.json();
+  return json;
+}
+export async function getMangaInfo(mangaId) {
+  const response = await fetch(`${baseUrl}/manga/${mangaId}`);
+  const json = await response.json();
+  return json;
+}
+
 function getCurrentSeasonParameters() {
   const today = DateTime.local();
   let start, end, season;

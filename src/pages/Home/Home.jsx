@@ -93,8 +93,8 @@ function Home() {
           </div>
         </div>
       </section>
-      <Carousel productList={anime} headerTitle={`New ${currentSeason} Anime ${currentYear}`}/>
-      <Carousel productList={manga} headerTitle={`New ${currentSeason} Manga ${currentYear}`}/>
+      <Carousel productType='anime' productList={anime} headerTitle={`New ${currentSeason} Anime ${currentYear}`}/>
+      <Carousel productType='manga' productList={manga} headerTitle={`New ${currentSeason} Manga ${currentYear}`}/>
     </div>
   )
 }

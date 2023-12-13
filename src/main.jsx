@@ -10,8 +10,9 @@ import Header from './components/Header/Header';
 import ErrorPage from './pages/ErrorPage';
 import Shop from './pages/Shop';
 import Cart from './pages/Cart';
+import ProductInfo from './components/ProductInfo/ProductInfo';
 import { loader as HomeLoader } from './pages/Home/Home';
-
+import { loader as ProductInfoLoader } from './components/ProductInfo/ProductInfo';
 const router = createBrowserRouter([
   {
     element: <Header />,
@@ -21,17 +22,20 @@ const router = createBrowserRouter([
         path: "/",
         element: <Home />,
         loader: HomeLoader,
-        children: [
-          {
-            path: 'shop',
-            element: <Shop />
-          },
-          {
-            path: 'cart',
-            element: <Cart />
-          },
-        ]
-      }
+      },
+      {
+        path: 'shop',
+        element: <Shop />
+      },
+      {
+        path: 'cart',
+        element: <Cart />
+      },
+      {
+        path: 'products/:productType/:productId',
+        element: <ProductInfo />,
+        loader: ProductInfoLoader,
+      },
     ],
   },
 ]);

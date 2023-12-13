@@ -7,10 +7,12 @@ import {
   Outlet,
   NavLink,
 } from "react-router-dom";
+import Searchbar from '../Searchbar/Searchbar';
+import { useMediaQuery } from '@react-hook/media-query';
 
 function Header() {
   const [searchInput, setSearchInput] = useState('');
-
+  const outsideNav = useMediaQuery('(max-width: 768px)');
   return (
     <>
       <header>
@@ -18,6 +20,8 @@ function Header() {
           <NavLink to={'/'}>
             <h1 className='store-name'>AnimeStore</h1>
           </NavLink>
+          {!outsideNav && 
+          <Searchbar searchInput={searchInput} setSearchInput={setSearchInput}/>}
           <div className="main-nav">
             <NavLink to={`/`}>
               Home
@@ -30,19 +34,7 @@ function Header() {
             </NavLink>
           </div>
         </nav>
-        <Form>
-          <button type='submit'>
-            <i className='fa fa-solid fa-search'></i>
-          </button>
-          <input type="text" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} spellCheck='false'/>
-          
-          <div className="reset-button-container">
-            <button type='button' className='reset' onClick={() => setSearchInput('')}>
-              <i className="fa fa-solid fa-times"></i>
-            </button>
-          </div>
-
-        </Form>
+        {outsideNav && <Searchbar searchInput={searchInput} setSearchInput={setSearchInput}/>}
       </header>
       <main>
         <Outlet />

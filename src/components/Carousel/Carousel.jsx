@@ -1,10 +1,12 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
-import ProductSmall from '../ProductImage/ProductImage';
+import ProductImage from '../ProductImage/ProductImage';
 import { useRef } from 'react';
 import './Carousel.css';
+import { NavLink } from 'react-router-dom';
 
-function Carousel({ 
+function Carousel({
+  productType,
   productList,
   headerTitle,
  }) {
@@ -21,7 +23,6 @@ function Carousel({
   }
 
   return (
-    
     <div className='carousel'>
       <h1 className='header-title'>{headerTitle}</h1>
       <div className='swooper'>
@@ -46,9 +47,11 @@ function Carousel({
         >
           {productList.data.map((productData) =>
             <SwiperSlide key={productData.title}>
-              <ProductSmall
+              <ProductImage
                 productImg={productData.images.jpg.large_image_url}
                 productTitle={productData.title}
+                productId={productData.mal_id}
+                productType={productType}
               />
             </SwiperSlide>
           )}
@@ -57,15 +60,16 @@ function Carousel({
           <i 
             ref={prevButton} 
             className='custom-prev-icon fa fa-3x fa-solid fa-angle-left' 
-            onClick={() => swiperRef.current?.slidePrev()}/>
+            onClick={() => swiperRef.current?.slidePrev()}
+          />
           <i 
             ref={nextButton} 
             className='custom-next-icon fa fa-3x fa-solid fa-angle-right' 
             onMouseOver={handleNextIconOnHover} 
             onMouseLeave={handleNextIconOnHoverLeave} 
-            onClick={() => swiperRef.current?.slideNext()}/>
+            onClick={() => swiperRef.current?.slideNext()}
+          />
         </div>
-          
       </div>
     </div>
   );
