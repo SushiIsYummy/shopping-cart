@@ -1,6 +1,7 @@
 .product-image {
   position: relative;
   aspect-ratio: 727 / 1000;
+  object-fit: contain;
   cursor: pointer;
 }
 
@@ -12,7 +13,8 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  /* max-height: 370px; */
+  object-fit: contain;
 }
 
 .product-image h1.title {

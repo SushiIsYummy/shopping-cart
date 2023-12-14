@@ -1,0 +1,9 @@
+.starRating {
+  display: flex;
+}
+
+.star {
+  position: relative;
+  color: #ddd;
+  font-size: 1.3rem;
+}

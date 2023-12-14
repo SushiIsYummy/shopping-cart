@@ -1,0 +1,136 @@
+.product-info-container {
+  margin: 10px;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* margin: 10px; */
+}
+
+.product-info .rating {
+  display: flex;
+  gap: 5px;
+  font-size: 1.2rem;
+}
+.product-info .product-name:not(.mobile),
+.product-info .rating:not(.mobile),
+.product-info .authors:not(.mobile) {
+  display: none;
+}
+
+.product-info-container .back {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  width: fit-content;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.product-info .left-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-info .left-side .product-img {
+  width: 100%;
+  max-width: 450px;
+  /* aspect-ratio: 727 / 1000; */
+
+  align-self: center;
+  /* margin: auto; */
+}
+
+.product-info .right-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-info .price {
+  color: rgb(255, 102, 0);
+  font-size: 2rem;
+}
+
+.product-info .quantity {
+  font-size: 1.3rem;
+}
+
+.product-info button.add-to-cart {
+  color: black;
+  background-color: orange;
+  border: none;
+  padding: 10px 20px;
+  width: 100%;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.product-info .synopsis-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.product-info .synopsis-header {
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+@media screen and (min-width: 768px) {
+  .product-info-container {
+    margin: 20px 70px;
+  }
+
+  .product-info {
+    flex-direction: row;
+    gap: 30px;
+  }
+
+  .product-info .product-name.mobile,
+  .product-info .rating.mobile,
+  .product-info .authors.mobile {
+    display: none;
+  }
+
+  .product-info .product-name:not(.mobile),
+  .product-info .authors:not(.mobile) {
+    display: block;
+  }
+
+  .product-info .rating:not(.mobile) {
+    display: flex;
+    gap: 5px;
+  }
+
+  .product-info .left-side {
+    display: flex;
+    /* justify-content: center; */
+    flex: 1;
+    /* border: 1px solid black; */
+  }
+
+  .product-info .left-side .product-img {
+    max-width: 550px;
+  }
+
+  .product-info .right-side {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .product-info button.add-to-cart {
+    width: 50%;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .product-info-container {
+    margin: 20px 150px;
+  }
+}

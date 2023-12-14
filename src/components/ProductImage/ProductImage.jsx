@@ -7,11 +7,6 @@ function ProductImage({
   productId,
   productType,
 }) {
-
-  // const onProductClick() {
-
-  // }
-
   return (
     <NavLink to={`products/${productType}/${productId}`}>
       <div className="product-image">

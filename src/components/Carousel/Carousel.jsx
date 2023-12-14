@@ -57,16 +57,16 @@ function Carousel({
           )}
         </Swiper>
         <div className='navigation-buttons'>
-          <i 
-            ref={prevButton} 
-            className='custom-prev-icon fa fa-3x fa-solid fa-angle-left' 
+          <i
+            ref={prevButton}
+            className='custom-prev-icon fa fa-solid fa-angle-left'
             onClick={() => swiperRef.current?.slidePrev()}
           />
-          <i 
-            ref={nextButton} 
-            className='custom-next-icon fa fa-3x fa-solid fa-angle-right' 
-            onMouseOver={handleNextIconOnHover} 
-            onMouseLeave={handleNextIconOnHoverLeave} 
+          <i
+            ref={nextButton}
+            className='custom-next-icon fa fa-solid fa-angle-right'
+            onMouseOver={handleNextIconOnHover}
+            onMouseLeave={handleNextIconOnHoverLeave}
             onClick={() => swiperRef.current?.slideNext()}
           />
         </div>
