@@ -9,7 +9,7 @@ import {
 import { getAnimeInfo, getMangaInfo } from '../../api';
 import formatPublishDates from '../../utils/formatPublishDates';
 import StarRating from '../../components/StarRating/StarRating';
-
+import generateFakePrice from '../../utils/generateFakePrice';
 
 export async function loader({ params }) {
   const productType = params.productType;
@@ -34,6 +34,8 @@ function ProductInfo() {
   const productTitle = productInfo.data.title;
   console.log(productInfo);
   const fakePrice = generateFakePrice(productTitle);
+  const originalRating = productInfo.data.score;
+  const ratingOutOfFive = +(Math.round(originalRating/2 + "e+2")  + "e-2");
   const navigate = useNavigate();
   const publishedDate = productType === 'manga' ? formatPublishDates(productInfo.data.published.from, productInfo.data.published.to) : null;
   console.log(publishedDate)
@@ -47,15 +49,15 @@ function ProductInfo() {
         <div className='left-side'>
           <h1 className='product-name mobile'>{productTitle}</h1>
           {productInfo.data?.authors && 
-            <p className='authors mobile'>Authors: &nbsp;
-              {productInfo.data.authors.map((author) => author['name']).join(', ')}
+            <p className='authors mobile'>Author(s): &nbsp;
+              {productInfo.data.authors.map((author) => `[${author['name']}]`).join(', ')}
             </p>
           }
           <div className='rating mobile'>
-            {productInfo.data.score ? (
+            {originalRating ? (
               <>
-                <p>{productInfo.data.score}</p>
-                <StarRating rating={productInfo.data.score/2}></StarRating>
+                <p>{ratingOutOfFive}</p>
+                <StarRating rating={ratingOutOfFive}></StarRating>
                 <p>{productInfo.data.scored_by} ratings</p>
               </>
             ) : (
@@ -67,15 +69,15 @@ function ProductInfo() {
         <div className="right-side">
           <h1 className='product-name'>{productTitle}</h1>
           {productInfo.data?.authors && 
-            <p className='authors'>Authors: &nbsp;
-              {productInfo.data.authors.map((author) => author['name']).join(', ')}
+            <p className='authors'>Author(s): &nbsp;
+              {productInfo.data.authors.map((author) => `[${author['name']}]`).join(', ')}
             </p>
           }
           <div className='rating'>
-            {productInfo.data.score ? (
+            {originalRating ? (
               <>
-                <p>{productInfo.data.score}</p>
-                <StarRating rating={productInfo.data.score/2}></StarRating>
+                <p>{ratingOutOfFive}</p>
+                <StarRating rating={ratingOutOfFive}></StarRating>
                 <p>{productInfo.data.scored_by} ratings</p>
               </>
             ) : (
@@ -100,17 +102,6 @@ function ProductInfo() {
       </div>
     </div>
   )
-}
-
-function generateFakePrice(productTitle) {
-  const hash = productTitle
-    .split('')
-    .reduce((acc, char) => (acc * 31 + char.charCodeAt(0)) % 100, 0);
-  const minPrice = 9.99;
-  const maxPrice = 59.99;
-  const priceRange = maxPrice - minPrice;
-  const fakePrice = (hash / 100) * priceRange + minPrice;
-  return fakePrice.toFixed(2);
 }
 
 export default ProductInfo;

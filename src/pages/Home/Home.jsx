@@ -45,14 +45,14 @@ function Home() {
                 <SwiperSlide>
                   <h1>Featured Anime</h1>
                   <div className="featured-anime">
-                    <Link>Samurai Champloo</Link>
+                    <Link to={`products/anime/205`}>Samurai Champloo</Link>
                     <img src='/samurai-champloo-fight.gif'></img>
                   </div>
                 </SwiperSlide>
                 <SwiperSlide>
                   <h1>Featured Manga</h1>
                   <div className="featured-manga">
-                    <Link>One Punch Man</Link>
+                    <Link to={`products/manga/44347`}>One Punch Man</Link>
                     <img src='/one-punch-man.jpeg'></img>
                   </div>
                 </SwiperSlide>
@@ -62,12 +62,12 @@ function Home() {
             <>
               <h1>Featured Anime</h1>
               <div className="featured-anime">
-                <Link>Samurai Champloo</Link>
+                <Link to={`products/anime/205`}>Samurai Champloo</Link>
                 <img src='/samurai-champloo-fight.gif'></img>
               </div>
               <h1>Featured Manga</h1>
               <div className="featured-manga">
-                <Link>One Punch Man</Link>
+                <Link to={`products/manga/44347`}>One Punch Man</Link>
                 <img src='/one-punch-man.jpeg'></img>
               </div>
             </>
@@ -77,16 +77,16 @@ function Home() {
           <h1>Popular Anime and Manga</h1>
           <div className="popular-anime-and-manga">
             <div className="anime-manga-container berserk">
-              <h1 className='name'>Berserk - <Link>Manga</Link></h1>
+              <h1 className='name'>Berserk - <Link to={`products/manga/2`}>Manga</Link></h1>
               <img src="/berserk.webp" alt="" />
             </div>
             <div className="right-side">
               <div className="anime-manga-container death-note">
-                <h1 className='name'>Death Note - <Link>Manga</Link> / <Link>Anime</Link></h1>
+                <h1 className='name'>Death Note - <Link to={`products/manga/21`}>Manga</Link> / <Link to={`products/anime/1535`}>Anime</Link></h1>
                 <img src="/death-note.jpg" alt="" />
               </div>
               <div className="anime-manga-container aot">
-                <h1 className='name'>Attack on Titan - <Link>Manga</Link> / <Link>Anime</Link></h1>
+                <h1 className='name'>Attack on Titan - <Link to={`products/manga/23390`}>Manga</Link> / <Link to={`products/anime/16498`}>Anime</Link></h1>
                 <img src="/aot.jpg" alt="" />
               </div>
             </div>

@@ -8,12 +8,12 @@ import Home from './pages/Home/Home';
 import './index.css'
 import Header from './components/Header/Header';
 import ErrorPage from './pages/ErrorPage';
-import Shop from './pages/Shop';
+import Shop from './pages/Shop/Shop';
 import Cart from './pages/Cart';
 import ProductInfo from './pages/ProductInfo/ProductInfo';
 import { loader as HomeLoader } from './pages/Home/Home';
 import { loader as ProductInfoLoader } from './pages/ProductInfo/ProductInfo';
-
+// import { loader as ShopLoader } from './pages/Shop/Shop';
 const router = createBrowserRouter([
   {
     element: <Header />,
@@ -26,7 +26,8 @@ const router = createBrowserRouter([
       },
       {
         path: 'shop',
-        element: <Shop />
+        element: <Shop />,
+        // loader: ShopLoader,
       },
       {
         path: 'cart',

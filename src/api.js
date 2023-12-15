@@ -25,6 +25,13 @@ export async function getAnimeInfo(animeId) {
   const json = await response.json();
   return json;
 }
+
+export async function getPopularAnimeInfo(pageNumber = 1) {
+  const response = await fetch(`${baseUrl}/anime?order_by=popularity&page=${pageNumber}`);
+  const json = await response.json();
+  return json;
+}
+
 export async function getMangaInfo(mangaId) {
   const response = await fetch(`${baseUrl}/manga/${mangaId}`);
   const json = await response.json();
