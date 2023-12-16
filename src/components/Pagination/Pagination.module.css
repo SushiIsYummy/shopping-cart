@@ -1,0 +1,28 @@
+.paginationButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  list-style-type: none;
+  padding: 20px;
+  gap: 5px;
+}
+
+.pageButton,
+.currentPageButton,
+.ellipsis {
+  padding: 5px 5px;
+  border: none;
+  background-color: transparent;
+  color: #a0a0a0;
+  font-weight: bold;
+}
+
+.pageButton,
+.currentPageButton {
+  cursor: pointer;
+}
+
+.currentPageButton {
+  text-decoration: underline;
+  color: #ff8c00;
+}

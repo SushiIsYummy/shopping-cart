@@ -4,6 +4,7 @@ import { getPopularAnimeInfo } from '../../api';
 import { useLoaderData } from 'react-router-dom';
 import generateFakePrice from '../../utils/generateFakePrice';
 import StarRating from '../../components/StarRating/StarRating';
+import Pagination from '../../components/Pagination/Pagination';
 
 export async function loader() {
   const popularAnime = await getPopularAnimeInfo();
@@ -17,14 +18,16 @@ function Shop() {
   const [selectedOption, setSelectedOption] = useState(options[0]);
   const [productsData, setProductsData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = productsData ? productsData.pagination.last_visible_page : null;
 
+  console.log(productsData);
   useEffect(() => {
     async function fetchData() {
       let updatedData;
       if (selectedOption === 'popularity') {
         updatedData = await getPopularAnimeInfo(currentPage);
       } else if (selectedOption === 'AZ') {
-        updatedData = await getPopularAnimeInfo();
+        // updatedData = await getPopularAnimeInfo();
       }
       setProductsData(updatedData);
     }
@@ -33,13 +36,18 @@ function Shop() {
     }
   }, [selectedOption, currentPage])
 
+  function handlePageChange(pageNumber) {
+    setCurrentPage(pageNumber);
+  }
+
   return (
     <div className={styles.shop}>
       <div className={styles.sortBar}>
         Sort by &nbsp;
-        <select name="sort-by" onChange={(e) => {
-          setSelectedOption(options[Number(e.target.value)]);
-        }}>
+        <select name="sort-by" 
+          onChange={(e) => {
+            setSelectedOption(options[Number(e.target.value)]);
+          }}>
           <option value="0">Popularity</option>
           <option value="1">Name: A-Z</option>
           <option value="2">Name: Z-A</option>
@@ -63,6 +71,14 @@ function Shop() {
           )
         })}
       </div>
+      {productsData && 
+        <Pagination 
+          totalPages={totalPages} 
+          currentPage={currentPage} 
+          onPageChange={handlePageChange}
+        />
+      }
+      {productsData && <div className={styles.backToTop}>Back to top</div>}
     </div>
   )
 }
