@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from './Pagination.module.css';
+import { useSearchParams } from 'react-router-dom';
 
 function Pagination({
   totalPages,
@@ -7,7 +8,13 @@ function Pagination({
   onPageChange,
 }) {
   const paginationButtons = setPaginationButtons(currentPage, totalPages);
-  
+
+  const handlePaginationButtonClick = (e) => {
+    if (!isNaN(Number(e.target.value))) {
+      onPageChange(Number(e.target.value));
+    }
+  }
+  let i = 0;
   return (
     <>
       <div className={styles.paginationButtons}>
@@ -15,7 +22,7 @@ function Pagination({
           let pageNumberKey;
           let buttonClass;
           if (pageNumber === '...') {
-            pageNumberKey = crypto.randomUUID();
+            pageNumberKey = `...-${i++}`;
             buttonClass = styles.ellipsis;
           } else {
             pageNumberKey = pageNumber;
@@ -26,11 +33,12 @@ function Pagination({
             }
           }
           return (
-            <button className={buttonClass} key={pageNumberKey} value={pageNumber} onClick={(e) => {
-              if (!isNaN(Number(e.target.value))) {
-                onPageChange(Number(e.target.value));
-              }
-            }}>
+            <button 
+              className={buttonClass} 
+              key={pageNumberKey} 
+              value={pageNumber} 
+              onClick={handlePaginationButtonClick}
+            >
               {pageNumber}
             </button>
           )
