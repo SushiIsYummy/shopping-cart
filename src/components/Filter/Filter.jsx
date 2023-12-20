@@ -4,11 +4,9 @@ import {
   useSearchParams, 
 } from "react-router-dom";
 import './Filter.css';
-import { filter } from "lodash";
 
 function Filter({
-  genreData,
-  setProductType,
+  genresData,
 }) {
   
   const [openCategories, setOpenCategories] = useState({});
@@ -43,15 +41,13 @@ function Filter({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const updatedSearchParams = {};
-
-    // Iterate over the filters object and add non-empty values to updatedSearchParams
+    const updatedSearchParams = new URLSearchParams(searchParams);
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== '' && !(Array.isArray(value) && value.length === 0)) {
-        updatedSearchParams[key] = Array.isArray(value) ? value.join('_') : value;
+        updatedSearchParams.set(key, Array.isArray(value) ? value.join('_') : value);
       }
     });
-
+    updatedSearchParams.set('page', '1');
     setSearchParams(updatedSearchParams);
   };
 
@@ -107,7 +103,7 @@ function Filter({
               value='anime' 
               onChange={(e) => {
                 handleFilterChange('productType', e.target.value);
-                setProductType(e.target.value)
+                // setProductType(e.target.value)
                 setSearchParams((searchParams) => ({ ...Object.fromEntries(searchParams), productType: e.target.value }));
               }}
               checked={filters.productType === 'anime'}  
@@ -121,7 +117,7 @@ function Filter({
               value='manga' 
               onChange={(e) => {
                 handleFilterChange('productType', e.target.value)
-                setProductType(e.target.value)
+                // setProductType(e.target.value)
                 setSearchParams((searchParams) => ({ ...Object.fromEntries(searchParams), productType: e.target.value }));
               }}
               checked={filters.productType === 'manga'}  
@@ -132,11 +128,11 @@ function Filter({
       </div>
       <div className="filter-option">
         <div className="category-header" onClick={() => handleCategoryClick('genres')}>
-          <div className="category">Genres ({genreData && genreData.length})</div>
+          <div className="category">Genres ({genresData && genresData.length})</div>
           <div className="plus-minus">{openCategories['genres'] ? '-' : '+'}</div>
         </div>
         <div className={`options ${(openCategories['genres'] !== null && !openCategories['genres'] && 'hide') || ''}`}>
-          {genreData && genreData.map((genre) => 
+          {genresData && genresData.map((genre) => 
             <label key={genre.name}>
               <input 
                 type='checkbox' 

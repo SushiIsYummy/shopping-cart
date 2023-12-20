@@ -77,7 +77,7 @@ function setPaginationButtons(currentPage, totalPages) {
     paginationButtons.push(totalPages);
   }
 
-  return paginationButtons
+  return paginationButtons;
 }
 
 export default Pagination;

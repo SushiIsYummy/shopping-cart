@@ -35,7 +35,7 @@ function ProductInfo() {
   console.log(productInfo);
   const fakePrice = generateFakePrice(productTitle);
   const originalRating = productInfo.data.score;
-  const ratingOutOfFive = +(Math.round(originalRating/2 + "e+2")  + "e-2");
+  const ratingOutOfFive = +(Math.round(Math.floor(originalRating/2 * 100) / 100 + "e+2")  + "e-2")
   const navigate = useNavigate();
   const publishedDate = productType === 'manga' ? formatPublishDates(productInfo.data.published.from, productInfo.data.published.to) : null;
   console.log(publishedDate)

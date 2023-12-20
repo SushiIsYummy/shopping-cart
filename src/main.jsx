@@ -14,6 +14,7 @@ import ProductInfo from './pages/ProductInfo/ProductInfo';
 import { loader as HomeLoader } from './pages/Home/Home';
 import { loader as ProductInfoLoader } from './pages/ProductInfo/ProductInfo';
 // import { loader as ShopLoader } from './pages/Shop/Shop';
+
 const router = createBrowserRouter([
   {
     element: <Header />,
