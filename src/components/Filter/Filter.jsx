@@ -3,7 +3,7 @@ import {
   Form, 
   useSearchParams, 
 } from "react-router-dom";
-import './Filter.css';
+import styles from './Filter.module.css';
 
 function Filter({
   genresData,
@@ -89,13 +89,13 @@ function Filter({
   }
   
   return (
-    <Form className="filter-options" onSubmit={handleSubmit}>
-      <div className="filter-option">
-        <div className="category-header" onClick={() => handleCategoryClick('products')}>
-          <div className="category">Products</div>
-          <div className="plus-minus">{openCategories['products'] ? '-' : '+'}</div>
+    <Form className={styles.filterContainer} onSubmit={handleSubmit}>
+      <div className={styles.filterOption}>
+        <div className={styles.categoryHeader} onClick={() => handleCategoryClick('products')}>
+          <div className={styles.category}>Products</div>
+          <div className={styles.plusMinus}>{openCategories['products'] ? '-' : '+'}</div>
         </div>
-        <div className={`options ${(openCategories['products'] !== null && !openCategories['products'] && 'hide') || ''}`}>
+        <div className={`${styles.options} ${(openCategories['products'] !== null && !openCategories['products'] && `${styles.hide}`) || ''}`}>
           <label>
             <input 
               type="radio" 
@@ -103,7 +103,6 @@ function Filter({
               value='anime' 
               onChange={(e) => {
                 handleFilterChange('productType', e.target.value);
-                // setProductType(e.target.value)
                 setSearchParams((searchParams) => ({ ...Object.fromEntries(searchParams), productType: e.target.value }));
               }}
               checked={filters.productType === 'anime'}  
@@ -117,7 +116,6 @@ function Filter({
               value='manga' 
               onChange={(e) => {
                 handleFilterChange('productType', e.target.value)
-                // setProductType(e.target.value)
                 setSearchParams((searchParams) => ({ ...Object.fromEntries(searchParams), productType: e.target.value }));
               }}
               checked={filters.productType === 'manga'}  
@@ -126,12 +124,12 @@ function Filter({
           </label>
         </div>
       </div>
-      <div className="filter-option">
-        <div className="category-header" onClick={() => handleCategoryClick('genres')}>
-          <div className="category">Genres ({genresData && genresData.length})</div>
-          <div className="plus-minus">{openCategories['genres'] ? '-' : '+'}</div>
+      <div className={styles.filterOption}>
+        <div className={styles.categoryHeader} onClick={() => handleCategoryClick('genres')}>
+          <div className={styles.category}>Genres ({genresData && genresData.length})</div>
+          <div className={styles.plusMinus}>{openCategories['genres'] ? '-' : '+'}</div>
         </div>
-        <div className={`options ${(openCategories['genres'] !== null && !openCategories['genres'] && 'hide') || ''}`}>
+        <div className={`${styles.options} ${(openCategories['genres'] !== null && !openCategories['genres'] && `${styles.hide}`) || ''}`}>
           {genresData && genresData.map((genre) => 
             <label key={genre.name}>
               <input 
@@ -143,33 +141,33 @@ function Filter({
                 }}
               />
               &nbsp;{genre.name}
-              {filters.genres.includes(genre.name) !== genresList.includes(genre.name) && <span className='unsaved-changes'></span>}
+              {filters.genres.includes(genre.name) !== genresList.includes(genre.name) && <span className={styles.unsavedChanges} ></span>}
             </label>
           )}
         </div>
       </div>
-      <div className="filter-option">
-        <div className="category-header" onClick={() => handleCategoryClick('scores')}>
-          <div className="category">Scores</div>
-          <div className="plus-minus">{openCategories['scores'] ? '-' : '+'}</div>
+      <div className={styles.filterOption}>
+        <div className={styles.categoryHeader} onClick={() => handleCategoryClick('scores')}>
+          <div className={styles.category}>Scores</div>
+          <div className={styles.plusMinus}>{openCategories['scores'] ? '-' : '+'}</div>
         </div>
-        <div className={`options ${(openCategories['scores'] !== null && !openCategories['scores'] && 'hide') || ''}`}>
+        <div className={`${styles.options} ${(openCategories['scores'] !== null && !openCategories['scores'] && `${styles.hide}`) || ''}`}>
           <label>
             Min Score: &nbsp;
             <input type="number" value={filters.minScore} name='minScore' min='0' max='5' step='0.01' onChange={(e) => handleFilterChange('minScore', e.target.value)}/>
-            {filters.minScore !== minScoreParam && <span className='unsaved-changes'></span>}
+            {filters.minScore !== minScoreParam && <span className={styles.unsavedChanges} ></span>}
           </label>
           <label>
             Max Score: &nbsp;
             <input type="number" value={filters.maxScore} name='maxScore' min='0' max='5' step='0.01' onChange={(e) => handleFilterChange('maxScore', e.target.value)}/>
 
-            {filters.maxScore !== maxScoreParam && <span className='unsaved-changes'></span>}
+            {filters.maxScore !== maxScoreParam && <span className={styles.unsavedChanges} ></span>}
           </label>
         </div>
       </div>
-      <div className="filter-reset-buttons">
-        <button className="filter-button" type='submit'>FILTER</button>
-        <button className="reset-button" type='button' onClick={handleReset}>RESET</button>
+      <div className={styles.filterResetButtons} >
+        <button className={styles.filterButton} type='submit'>FILTER</button>
+        <button className={styles.resetButton} type='button' onClick={handleReset}>RESET</button>
       </div>
     </Form>
   );

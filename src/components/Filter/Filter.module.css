@@ -1,8 +1,11 @@
-.filter-options.hide {
+.filterContainer {
+}
+
+.filterContainer.hide {
   display: none;
 }
 
-.filter-options .category-header {
+.categoryHeader {
   cursor: pointer;
   background-color: rgb(192, 192, 192);
   border-bottom: 1px solid black;
@@ -12,12 +15,12 @@
   padding: 0 3px;
 }
 
-.filter-options .category {
+.category {
   font-weight: bold;
   padding: 5px 0 5px 0px;
 }
 
-.filter-options .options {
+.options {
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -27,35 +30,36 @@
   overflow-y: scroll;
 }
 
-.filter-options .options.hide {
+.options.hide {
   display: none;
 }
 
-.filter-options .options label {
+.filterContainer .options label {
   display: flex;
+  width: fit-content;
 }
 
-.unsaved-changes::after {
+.unsavedChanges::after {
   content: '*';
   color: red;
 }
 
-.category-header {
+.categoryHeader {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
 
-.filter-reset-buttons {
+.filterResetButtons {
   display: flex;
   gap: 10px;
   padding: 10px;
   background-color: rgb(187, 187, 187);
 }
 
-.filter-button,
-.reset-button {
+.filterButton,
+.resetButton {
   flex: 1;
   padding: 10px 0;
 }
