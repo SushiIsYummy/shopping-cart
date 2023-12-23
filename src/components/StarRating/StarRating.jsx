@@ -17,12 +17,10 @@ function StarRating({
         };
         rating -= 1;
         return (
-          <>
-            <i key={index} className={`${styles.star} fa fa-solid fa-star`} >
-              <i className={`${styles.star} fa fa-solid fa-star`} style={starStyleAfter}>
-              </i>
+          <i key={index} className={`${styles.star} fa fa-solid fa-star`} >
+            <i className={`${styles.star} fa fa-solid fa-star`} style={starStyleAfter}>
             </i>
-          </>
+          </i>
         )
       })}
     </div>

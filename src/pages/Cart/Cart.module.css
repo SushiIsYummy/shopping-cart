@@ -1,0 +1,32 @@
+.cart {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.subtotalText {
+  padding: 20px 0;
+  text-align: right;
+}
+
+.emptyCart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+}
+
+.emptyCart p {
+  font-weight: bold;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.emptyCart button {
+  padding: 10px 20px;
+  border: none;
+  font-weight: bold;
+  background-color: orange;
+  cursor: pointer;
+}

@@ -9,7 +9,7 @@ import './index.css'
 import Header from './components/Header/Header';
 import ErrorPage from './pages/ErrorPage';
 import Shop from './pages/Shop/Shop';
-import Cart from './pages/Cart';
+import Cart from './pages/Cart/Cart';
 import ProductInfo from './pages/ProductInfo/ProductInfo';
 import { loader as HomeLoader } from './pages/Home/Home';
 import { loader as ProductInfoLoader } from './pages/ProductInfo/ProductInfo';

@@ -29,6 +29,10 @@
   margin-bottom: 10px;
 }
 
+.back i {
+  font-size: 0.8rem;
+}
+
 .product-info .left-side {
   display: flex;
   flex-direction: column;
@@ -59,6 +63,10 @@
   font-size: 1.3rem;
 }
 
+.quantity select {
+  padding: 4px 7px;
+}
+
 .product-info button.add-to-cart {
   color: black;
   background-color: orange;
@@ -80,7 +88,7 @@
   font-size: 1.3rem;
 }
 
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
   .product-info-container {
     margin: 20px 70px;
   }
@@ -129,7 +137,7 @@
   }
 }
 
-@media (min-width: 1200px) {
+@media screen and (min-width: 1200px) {
   .product-info-container {
     margin: 20px 150px;
   }

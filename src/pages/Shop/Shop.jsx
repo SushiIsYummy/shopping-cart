@@ -8,12 +8,14 @@ import { getAnimeGenres, getMangaGenres, getNewestAnimeInfo, getNewestMangaInfo,
 import { 
   NavLink,
   useSearchParams,
+  useNavigate,
 } from 'react-router-dom';
 import generateFakePrice from '../../utils/generateFakePrice';
 import StarRating from '../../components/StarRating/StarRating';
 import Pagination from '../../components/Pagination/Pagination';
 import Filter from '../../components/Filter/Filter';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
+import { addToCart } from '../../cartItemsLocalStorage';
 
 // export async function loader() {
 //   const popularAnime = await getPopularAnimeInfo();
@@ -27,10 +29,14 @@ function Shop() {
   const [productsData, setProductsData] = useState(null);
   const [genresData, setGenresData] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingProductsData, setIsLoadingProductsData] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
+  const navigate = useNavigate();
 
+  let hasProducts = productsData?.data?.length > 0;
+
+  // url search params
   let sortByParam = searchParams.get('sortBy');
   let productTypeParam = searchParams.get('productType');
   let pageParam = searchParams.get('page');
@@ -128,15 +134,15 @@ function Shop() {
         console.log('got manga info!');
       }
       setProductsData(updatedData);
-      setIsLoading(false);
+      setIsLoadingProductsData(false);
     }
     console.log('ENTERING FETCH PRODUCTS');
 
-    if (pageParam && sortByParam && productTypeParam && !isLoading) {
+    if (pageParam && sortByParam && productTypeParam && !isLoadingProductsData) {
       // add timeout in development to prevent 429 too many requests
       // in react strictmode, the app calls api 4 times total on page refresh
       // api has a rate limit of 3 requests per second
-      setIsLoading(true);
+      setIsLoadingProductsData(true);
       setTimeout(() => {
         fetchProductsData();
       }, 2000);
@@ -160,7 +166,7 @@ function Shop() {
       filterParams = filterParams.concat(`genres=${genreIds}`);
     }
     if (minScoreParam) {
-      filterParams = filterParams.concat(`&min_score=${Math.round(minScoreParam/2 + "e+2")  + "e-2"}`);
+      filterParams = filterParams.concat(`&min_score=${Math.round(minScoreParam*2 + "e+2")  + "e-2"}`);
     }
     if (maxScoreParam) {
       filterParams = filterParams.concat(`&max_score=${maxScoreParam*2}`);
@@ -180,34 +186,47 @@ function Shop() {
 
   return (
     <>
-      {isLoading && <LoadingOverlay />}
+      {isLoadingProductsData && <LoadingOverlay />}
       <div className={styles.shop}>
+        {isSmallScreen &&
+        <p className={styles.back} onClick={() => { navigate(-1) }}>
+          <i className='fa fa-2xs fa-solid fa-arrow-left'></i>
+          Back
+        </p>}
         <div className={styles.sortAndFilter}>
-          <div className={styles.buttonAndSelect}>
-            <button 
-              type='button' 
-              className={styles.filter} 
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              {`${showFilters ? 'Hide' : 'Show'} Filters`}
-            </button>
-            <div className={styles.sortByContainer}>
-              Sort by &nbsp;
-              <select className={styles.sortBsy}
-                onChange={(e) => {
-                  setSearchParams((searchParams) => {
-                    const updatedSearchParams = new URLSearchParams(searchParams);
-                    updatedSearchParams.set('page', '1');
-                    updatedSearchParams.set('sortBy', options[Number(e.target.value)]);
-                    return updatedSearchParams;
-                  })
-                }}>
-                <option value="0" selected={sortByParam === 'popularity'}>Popularity</option>
-                <option value="1" selected={sortByParam === 'AZ'}>Name: A-Z</option>
-                <option value="2" selected={sortByParam === 'ZA'}>Name: Z-A</option>
-                <option value="3" selected={sortByParam === 'newest'}>Newest to Oldest</option>
-                <option value="4" selected={sortByParam === 'oldest'}>Oldest to Newest</option>
-              </select>
+          <div className={styles.topBlock}>
+            {!isSmallScreen &&
+            <p className={styles.back} onClick={() => { navigate(-1) }}>
+              <i className='fa fa-2xs fa-solid fa-arrow-left'></i>
+              Back
+            </p>}
+            <div className={styles.buttonAndSelect}>
+              <button 
+                type='button' 
+                className={styles.filter} 
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                {`${showFilters ? 'Hide' : 'Show'} Filters`}
+              </button>
+              <div className={styles.sortByContainer}>
+                <p>Sort by &nbsp;</p>
+                <select className={styles.sortBsy}
+                  onChange={(e) => {
+                    setSearchParams((searchParams) => {
+                      const updatedSearchParams = new URLSearchParams(searchParams);
+                      updatedSearchParams.set('page', '1');
+                      updatedSearchParams.set('sortBy', options[Number(e.target.value)]);
+                      return updatedSearchParams;
+                    })
+                  }}>
+                  <option value="0" selected={sortByParam === 'popularity'}>Popularity</option>
+                  <option value="1" selected={sortByParam === 'AZ'}>Name: A-Z</option>
+                  <option value="2" selected={sortByParam === 'ZA'}>Name: Z-A</option>
+                  <option value="3" selected={sortByParam === 'newest'}>Newest to Oldest</option>
+                  <option value="4" selected={sortByParam === 'oldest'}>Oldest to Newest</option>
+                </select>
+              </div>
+
             </div>
           </div>
           {showFilters && isSmallScreen &&
@@ -216,8 +235,9 @@ function Shop() {
           />}
         </div>
         <p className={styles.paginationInfo}>
-          {productsData?.data?.length > 0 && `Showing ${paginationStartIndex}-${paginationEndIndex} of ${totalItems} Total Products`}
-          {!(productsData?.data?.length > 0) &&  `No Products Found.`}
+          {!isLoadingProductsData && hasProducts && `Showing ${paginationStartIndex}-${paginationEndIndex} of ${totalItems} Total Products`}
+          {!isLoadingProductsData && !(hasProducts) &&  `No Products Found.`}
+          {isLoadingProductsData && 'Loading Products...'}
         </p>
         <div className={styles.filterAndItems}>
           {showFilters && !isSmallScreen &&
@@ -229,39 +249,88 @@ function Shop() {
               const ratingOutOfFive = +(Math.round(Math.floor(product.score/2 * 100) / 100 + "e+2")  + "e-2")
               return (
                 // sometimes the api response has 2+ items with the same 'mal_id'
-                <div key={index} className={styles.itemInfoContainer}>
-                  <div className={styles.itemInfo}>
-                    <NavLink to={`/products/${productTypeParam}/${product.mal_id}`}>
-                      <img src={product.images.jpg.large_image_url} alt="" />
-                    </NavLink>
-                    <NavLink to={`/products/${productTypeParam}/${product.mal_id}`}>
-                      <p className={styles.itemTitle}>{product.title}</p>
-                    </NavLink>
-                    <div className={styles.starRatingContainer}>
-                      <p className={styles.ratingDecimal}>{ratingOutOfFive}</p>
-                      <StarRating rating={ratingOutOfFive}></StarRating>
-                      <p className={styles.reviews}>({product.scored_by})</p>
-                    </div>
-                    <p className={styles.price}>${generateFakePrice(product.title)}</p>
-                    <button className={styles.addToCart}>ADD TO CART</button>
-                  </div>
-                </div>
+                <ShopItem 
+                  key={index} 
+                  productTypeParam={productTypeParam} 
+                  productData={product} 
+                  ratingOutOfFive={ratingOutOfFive}
+                />
               )
             })}
           </div>
         </div>
-        {productsData?.data?.length > 0 && 
+        {hasProducts && totalPages > 1 &&
           <Pagination 
             totalPages={totalPages} 
             currentPage={Number(pageParam)} 
             onPageChange={handlePageChange}
+            customStyles={styles}
+            isLoading = {isLoadingProductsData}
           />}
-        {productsData?.data?.length > 0 && 
-          <div className={styles.backToTop} onClick={() => window.scrollTo({ top: 0})}>Back to top</div>
-        }
       </div>
+      {hasProducts && 
+        <div className={styles.backToTop} onClick={() => window.scrollTo({ top: 0})}>Back to top</div>
+      }
     </>
   )
 }
 
+function ShopItem({
+  productTypeParam,
+  productData,
+  ratingOutOfFive,
+}) {
+  const [itemQuantity, setItemQuantity] = useState(1);
+  // console.log(productData);
+  const fakePrice = generateFakePrice(productData.title);
+  function handleAddToCartClick() {
+    let newItem = {};
+    newItem['quantity'] = itemQuantity;
+    newItem['productId'] = productData.mal_id;
+    newItem['productType'] = productTypeParam;
+    newItem['productImage'] = productData.images.jpg.large_image_url;
+    newItem['productTitle'] = productData.title;
+    newItem['price'] = fakePrice;
+    addToCart(newItem);
+  }
+
+  function handleQuantityChange(e) {
+    let newQuantity = e.target.value;
+    setItemQuantity(newQuantity);
+  }
+
+  return (
+    <div className={styles.itemInfoContainer}>
+      <div className={styles.itemInfo}>
+        <NavLink to={`/products/${productTypeParam}/${productData.mal_id}`}>
+          <img src={productData.images.jpg.large_image_url} alt="" />
+        </NavLink>
+        <NavLink to={`/products/${productTypeParam}/${productData.mal_id}`}>
+          <p className={styles.itemTitle}>{productData.title}</p>
+        </NavLink>
+        <div className={styles.starRatingContainer}>
+          <p className={styles.ratingDecimal}>{ratingOutOfFive}</p>
+          <StarRating rating={ratingOutOfFive}></StarRating>
+          <p className={styles.reviews}>({productData.scored_by})</p>
+        </div>
+        <div className={styles.priceAndQuantity}>
+          <p className={styles.price}>${fakePrice}</p>
+          <p className={styles.quantity}>Quantity: &nbsp;
+            <select onChange={handleQuantityChange} value={itemQuantity}>
+              {Array.from({ length: 3 }, (_, index) => (
+                <option key={index}>{index + 1}</option>
+              ))}
+            </select>
+          </p>
+        </div>
+        <button 
+          className={styles.addToCart}
+          onClick={handleAddToCartClick}
+        >
+          ADD TO CART
+        </button>
+      </div>
+    </div>
+  )
+}
 export default Shop;

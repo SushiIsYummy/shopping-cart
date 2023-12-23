@@ -1,51 +1,50 @@
 import { useState } from 'react';
 import styles from './Pagination.module.css';
-import { useSearchParams } from 'react-router-dom';
 
 function Pagination({
   totalPages,
   currentPage,
   onPageChange,
+  customStyles,
 }) {
   const paginationButtons = setPaginationButtons(currentPage, totalPages);
 
   const handlePaginationButtonClick = (e) => {
     if (!isNaN(Number(e.target.value))) {
       onPageChange(Number(e.target.value));
+      window.scrollTo({ top: 0 });
     }
   }
   let i = 0;
   return (
-    <>
-      <div className={styles.paginationButtons}>
-        {paginationButtons.map((pageNumber) => {
-          let pageNumberKey;
-          let buttonClass;
-          if (pageNumber === '...') {
-            pageNumberKey = `...-${i++}`;
-            buttonClass = styles.ellipsis;
+    <div className={`${styles.paginationButtons} ${customStyles?.paginationButtons ?? ''}`}>
+      {paginationButtons.map((pageNumber) => {
+        let pageNumberKey;
+        let buttonClass;
+        if (pageNumber === '...') {
+          pageNumberKey = `...-${i++}`;
+          buttonClass = styles.ellipsis;
+        } else {
+          pageNumberKey = pageNumber;
+          if (currentPage === pageNumber) {
+            buttonClass = styles.currentPageButton;
           } else {
-            pageNumberKey = pageNumber;
-            if (currentPage === pageNumber) {
-              buttonClass = styles.currentPageButton;
-            } else {
-              buttonClass = styles.pageButton;
-            }
+            buttonClass = styles.pageButton;
           }
-          return (
-            <button 
-              className={buttonClass} 
-              key={pageNumberKey} 
-              value={pageNumber} 
-              onClick={handlePaginationButtonClick}
-            >
-              {pageNumber}
-            </button>
-          )
         }
-        )}
-      </div>
-    </>
+        return (
+          <button 
+            className={buttonClass} 
+            key={pageNumberKey} 
+            value={pageNumber} 
+            onClick={handlePaginationButtonClick}
+          >
+            {pageNumber}
+          </button>
+        )
+      }
+      )}
+    </div>
   )
 }
 

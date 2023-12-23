@@ -1,0 +1,55 @@
+import { useEffect, useState } from 'react';
+import styles from './CartItem.module.css';
+import { changeCartItemQuantity, removeFromCart } from '../../cartItemsLocalStorage';
+import { NavLink } from 'react-router-dom';
+function CartItem({
+  itemData,
+}) {
+  const { quantity, productId, productType, price, productTitle, productImage } = itemData;
+  const [itemQuantity, setItemQuantity] = useState(itemData.quantity);
+  const [totalPrice, setTotalPrice] = useState(Number(quantity)*Number(price));
+
+  useEffect(() => {
+    setTotalPrice(Number(itemQuantity)*Number(price));
+  }, [itemQuantity, price]);
+
+  // console.log(itemData)
+
+  function handleQuantityChange(e) {
+    let newQuantity = e.target.value;
+    changeCartItemQuantity(productId, productType, newQuantity);
+    setItemQuantity(newQuantity);
+  }
+
+  function handleRemoveItem() {
+    removeFromCart(productId, productType);
+  }
+
+  return (
+    <div className={styles.cartItem}>
+      <div className={styles.topPart}>
+        <NavLink to={`/products/${productType}/${productId}`}>
+          <img src={productImage} alt="" />
+        </NavLink>
+        <div className={styles.titleAndPrice}>
+          <NavLink to={`/products/${productType}/${productId}`}>
+            <p className={styles.productTitle}>{productTitle}</p>
+          </NavLink>
+          <p className={styles.totalPrice}>${totalPrice}</p>
+        </div>
+      </div>
+      <div className={styles.bottomPart}>
+        <p className={styles.quantity}>Quantity: &nbsp;
+          <select onChange={handleQuantityChange} value={itemQuantity}>
+            {Array.from({ length: 3 }, (_, index) => (
+              <option key={index}>{index + 1}</option>
+            ))}
+          </select>
+        </p>
+        <button className={styles.removeButton} onClick={handleRemoveItem}>Remove</button>
+      </div>
+    </div>
+  )
+}
+
+export default CartItem;

@@ -10,6 +10,7 @@ import { getAnimeInfo, getMangaInfo } from '../../api';
 import formatPublishDates from '../../utils/formatPublishDates';
 import StarRating from '../../components/StarRating/StarRating';
 import generateFakePrice from '../../utils/generateFakePrice';
+import { addToCart } from '../../cartItemsLocalStorage';
 
 export async function loader({ params }) {
   const productType = params.productType;
@@ -30,15 +31,36 @@ export async function loader({ params }) {
 }
 
 function ProductInfo() {
+  const [quantity, setQuantity] = useState(1);
+
+
   const { productInfo, productType } = useLoaderData();
-  const productTitle = productInfo.data.title;
   console.log(productInfo);
-  const fakePrice = generateFakePrice(productTitle);
   const originalRating = productInfo.data.score;
   const ratingOutOfFive = +(Math.round(Math.floor(originalRating/2 * 100) / 100 + "e+2")  + "e-2")
   const navigate = useNavigate();
   const publishedDate = productType === 'manga' ? formatPublishDates(productInfo.data.published.from, productInfo.data.published.to) : null;
-  console.log(publishedDate)
+  const productTitle = productInfo.data.title;
+  const productId = productInfo.data.mal_id;
+  const productImage = productInfo.data.images.jpg.large_image_url;
+  const fakePrice = generateFakePrice(productTitle);
+
+  function handleAddToCartClick() {
+    let newItem = {};
+    newItem['quantity'] = quantity;
+    newItem['productId'] = productId;
+    newItem['productType'] = productType;
+    newItem['productImage'] = productImage;
+    newItem['productTitle'] = productTitle;
+    newItem['price'] = fakePrice;
+    addToCart(newItem);
+  }
+
+  function handleQuantityChange(e) {
+    console.log(typeof e.target.value);
+    setQuantity(Number(e.target.value));
+  }
+
   return (
     <div className="product-info-container">
       <p className='back' onClick={() => { navigate(-1) }}>
@@ -64,7 +86,7 @@ function ProductInfo() {
               'No rating yet'
             )}
           </div>
-          <img className='product-img' src={productInfo.data.images.jpg.large_image_url} alt={`cover of ${productTitle}`} />
+          <img className='product-img' src={productImage} alt={`cover of ${productTitle}`} />
         </div>
         <div className="right-side">
           <h1 className='product-name'>{productTitle}</h1>
@@ -85,8 +107,14 @@ function ProductInfo() {
             )}
           </div>
           <p className='price'>${fakePrice}</p>
-          <p className='quantity'>Quantity: <input type="number"/></p>
-          <button className='add-to-cart'>ADD TO CART</button>
+          <p className='quantity'>Quantity: &nbsp;
+            <select onChange={handleQuantityChange} value={quantity}>
+              {Array.from({ length: 3 }, (_, index) => (
+                <option key={index}>{index + 1}</option>
+              ))}
+            </select>
+          </p>
+          <button className='add-to-cart' onClick={handleAddToCartClick}>ADD TO CART</button>
           <div className="synopsis-section">
             <p className='synopsis-header'>Synopsis</p>
             <p className='synopsis'>{productInfo.data.synopsis ? productInfo.data.synopsis : 'No synopsis available.'}</p>

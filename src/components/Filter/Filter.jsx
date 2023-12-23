@@ -46,6 +46,9 @@ function Filter({
       if (value !== '' && !(Array.isArray(value) && value.length === 0)) {
         updatedSearchParams.set(key, Array.isArray(value) ? value.join('_') : value);
       }
+      if (value === '') {
+        updatedSearchParams.delete(key);
+      }
     });
     updatedSearchParams.set('page', '1');
     setSearchParams(updatedSearchParams);
