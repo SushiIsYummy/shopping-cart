@@ -5,13 +5,11 @@ import {
 } from "react-router-dom";
 
 function Searchbar({
-  customStyles,
   searchInput,
   setSearchInput,
 }) {
-  const searchBarStyles = customStyles?.customSearchBar ? customStyles.customSearchBar : styles.searchBar;
   return (
-    <Form className={searchBarStyles}>
+    <Form className={styles.searchbar}>
       <button className={styles.submitButton} type='submit'>
         <i className='fa fa-solid fa-search'></i>
       </button>

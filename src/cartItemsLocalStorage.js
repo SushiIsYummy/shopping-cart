@@ -42,6 +42,15 @@ function getCartItem(productId, productType) {
   return null;
 }
 
+export function getTotalItemsInCart() {
+  let cartItems = getCartItemsLocalStorage();
+  let totalItems = cartItems.reduce((itemCount, item) => {
+    return itemCount + Number(item.quantity);
+  }, 0);
+  console.log(totalItems);
+  return totalItems;
+}
+
 export function changeCartItemQuantity(productId, productType, newQuantity) {
   if (Number(newQuantity) > maxQuantity) {
     console.log('QUANTITY EXCEEDED!');

@@ -12,10 +12,12 @@
   border: 1px solid black;
 }
 
-a:visited {
+.topPart a:visited {
   color: black;
 }
-a:link {
+
+.topPart a:link {
+  text-decoration: none;
   color: black;
 }
 
@@ -57,4 +59,5 @@ a:link {
   color: white;
   background-color: red;
   font-weight: bold;
+  cursor: pointer;
 }

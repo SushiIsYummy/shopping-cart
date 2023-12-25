@@ -1,6 +1,6 @@
-.searchBar {
+.searchbar {
   display: flex;
-  height: 55px;
+  height: 60px;
   width: 100%;
   background-color: black;
   padding: 10px;

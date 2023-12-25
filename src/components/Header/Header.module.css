@@ -1,0 +1,85 @@
+/* searchbar */
+.header > form {
+  padding: 10px 20px 20px;
+  height: 65px;
+}
+
+.storeName {
+  font-size: 1.3rem;
+  background-color: red;
+  background-image: linear-gradient(red, yellow);
+  padding: 0 5px;
+  color: rgb(0, 0, 0);
+}
+
+.headerNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 20px 20px 10px;
+  background-color: black;
+}
+
+.mainNav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mainNav a {
+  font-size: 1.3rem;
+  color: white;
+}
+
+.headerNav a {
+  text-decoration: none;
+}
+
+.mainNav a:visited {
+  color: white;
+}
+
+.cartIconContainer {
+  position: relative;
+}
+
+.cartIconContainer span {
+  position: absolute;
+  top: -10%;
+  right: 40%;
+  font-size: 0.8rem;
+}
+
+.cartIconContainer span p {
+  position: absolute;
+  background-color: red;
+  padding: 0 4px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.shoppingCart {
+  padding: 4px 0;
+  width: 30px;
+  height: 20px;
+  cursor: pointer;
+}
+
+@media screen and (min-width: 350px) {
+  .storeName {
+    font-size: 1.6rem;
+  }
+}
+@media screen and (min-width: 390px) {
+  .storeName {
+    font-size: 2rem;
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  .headerNav {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
