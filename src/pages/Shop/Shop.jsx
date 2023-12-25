@@ -246,7 +246,7 @@ function Shop() {
           />}
           <div className={styles.items}>
             {productsData && productsData?.data?.map((product, index) => {
-              const ratingOutOfFive = +(Math.round(Math.floor(product.score/2 * 100) / 100 + "e+2")  + "e-2")
+              const ratingOutOfFive = Number(+(Math.round(Math.floor(product.score/2 * 100) / 100 + "e+2")  + "e-2")).toFixed(2);
               return (
                 // sometimes the api response has 2+ items with the same 'mal_id'
                 <ShopItem 

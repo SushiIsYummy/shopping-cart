@@ -9,19 +9,19 @@ function Cart() {
   
   const totalItems = itemsData.reduce((itemCount, item) => { return itemCount + Number(item.quantity); }, 0);
   const subtotal = itemsData.reduce((itemCount, item) => { return itemCount + Number(item.quantity)*Number(item.price); }, 0);
-  const subtotalRounded = +(Math.round(subtotal* 100 / 100 + "e+2")  + "e-2")
+  const subtotalRounded = Number(+(Math.round(subtotal* 100 / 100 + "e+2")  + "e-2")).toFixed(2);
   console.log(totalItems)
   console.log(itemsData)
 
   useEffect(() => {
-    const handleStorageChange = () => {
+    const handleCartItemsChange = () => {
       setItemsData(getCartItemsLocalStorage());
     };
 
-    window.addEventListener('cartItemsChanged', handleStorageChange);
+    window.addEventListener('cartItemsChanged', handleCartItemsChange);
 
     return () => {
-      window.removeEventListener('cartItemsChanged', handleStorageChange);
+      window.removeEventListener('cartItemsChanged', handleCartItemsChange);
     };
   }, []);
 
@@ -30,7 +30,7 @@ function Cart() {
       {totalItems > 0 &&
       <div className={styles.cart}>
         <header>
-          <h1>My Cart ({itemsData.length})</h1>
+          <h1>My Cart ({totalItems})</h1>
         </header>
         <div className={styles.cartItems}>
           {itemsData.map((item) => {

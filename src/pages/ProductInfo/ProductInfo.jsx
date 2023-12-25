@@ -37,7 +37,7 @@ function ProductInfo() {
   const { productInfo, productType } = useLoaderData();
   console.log(productInfo);
   const originalRating = productInfo.data.score;
-  const ratingOutOfFive = +(Math.round(Math.floor(originalRating/2 * 100) / 100 + "e+2")  + "e-2")
+  const ratingOutOfFive = Number(+(Math.round(Math.floor(originalRating/2 * 100) / 100 + "e+2")  + "e-2")).toFixed(2);
   const navigate = useNavigate();
   const publishedDate = productType === 'manga' ? formatPublishDates(productInfo.data.published.from, productInfo.data.published.to) : null;
   const productTitle = productInfo.data.title;

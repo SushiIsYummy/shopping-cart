@@ -8,7 +8,7 @@
 .cartItem img {
   aspect-ratio: 1 / 1;
   object-fit: contain;
-  max-width: 150px;
+  max-width: 100px;
   border: 1px solid black;
 }
 
@@ -27,18 +27,27 @@
 
 .titleAndPrice {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
+  justify-content: space-between;
   gap: 5px;
   padding: 10px;
   flex: 1;
 }
 
 .productTitle {
+  display: -webkit-box;
+  line-height: 1rem;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1.1rem;
   font-weight: bold;
+  flex: 1;
 }
 
 .totalPrice {
-  text-align: right;
+  /* text-align: right; */
 }
 
 .bottomPart {
@@ -60,4 +69,13 @@
   background-color: red;
   font-weight: bold;
   cursor: pointer;
+}
+
+@media screen and (min-width: 769px) {
+  .cartItem img {
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    max-width: 150px;
+    border: 1px solid black;
+  }
 }

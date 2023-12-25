@@ -9,10 +9,12 @@ import {
 import Searchbar from '../Searchbar/Searchbar';
 import { useMediaQuery } from '@react-hook/media-query';
 import { getTotalItemsInCart } from '../../cartItemsLocalStorage';
+import MiniCart from '../../pages/MiniCart/MiniCart';
 
 function Header() {
   const [searchInput, setSearchInput] = useState('');
   const [totalItems, setTotalItems] = useState(getTotalItemsInCart());
+  const [miniCartIsOpen, setMiniCartIsOpen] = useState(false);
   const outsideNav = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
@@ -26,6 +28,10 @@ function Header() {
       window.removeEventListener('cartItemsChanged', handleCartItemsChange);
     };
   }, []);
+
+  function handleCartClick() {
+    setMiniCartIsOpen(!miniCartIsOpen);
+  }
 
   return (
     <>
@@ -43,17 +49,15 @@ function Header() {
             <NavLink to={`/shop`}>
               Shop
             </NavLink>
-            <NavLink to={`/cart`}>
-              <div className={styles.cartIconContainer}>
-                <FontAwesomeIcon className={styles.shoppingCart} icon={faShoppingCart}></FontAwesomeIcon>
-                {totalItems > 0 &&
-                <span>
-                  <p>
-                    {totalItems}
-                  </p>
-                </span>}
-              </div>
-            </NavLink>
+            <div className={styles.cartIconContainer} onClick={handleCartClick}>
+              <FontAwesomeIcon className={styles.shoppingCart} icon={faShoppingCart}></FontAwesomeIcon>
+              {totalItems > 0 &&
+              <span>
+                <p onClick={handleCartClick}>
+                  {totalItems}
+                </p>
+              </span>}
+            </div>
           </div>
         </nav>
         {outsideNav && <Searchbar customStyles={styles} searchInput={searchInput} setSearchInput={setSearchInput}/>}
@@ -61,6 +65,7 @@ function Header() {
       <main>
         <Outlet />
       </main>
+      <MiniCart isOpen={miniCartIsOpen} setMiniCartIsOpen={setMiniCartIsOpen}/>
     </>
   )
 }

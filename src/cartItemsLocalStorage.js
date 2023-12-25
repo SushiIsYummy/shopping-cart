@@ -47,7 +47,6 @@ export function getTotalItemsInCart() {
   let totalItems = cartItems.reduce((itemCount, item) => {
     return itemCount + Number(item.quantity);
   }, 0);
-  console.log(totalItems);
   return totalItems;
 }
 

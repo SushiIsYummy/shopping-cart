@@ -4,6 +4,7 @@ import { changeCartItemQuantity, removeFromCart } from '../../cartItemsLocalStor
 import { NavLink } from 'react-router-dom';
 function CartItem({
   itemData,
+  handleNavLinkClick,
 }) {
   const { quantity, productId, productType, price, productTitle, productImage } = itemData;
   const [itemQuantity, setItemQuantity] = useState(itemData.quantity);
@@ -13,7 +14,6 @@ function CartItem({
     setTotalPrice(Number(itemQuantity)*Number(price));
   }, [itemQuantity, price]);
 
-  // console.log(itemData)
 
   function handleQuantityChange(e) {
     let newQuantity = e.target.value;
@@ -28,11 +28,11 @@ function CartItem({
   return (
     <div className={styles.cartItem}>
       <div className={styles.topPart}>
-        <NavLink to={`/products/${productType}/${productId}`}>
+        <NavLink to={`/products/${productType}/${productId}`} onClick={handleNavLinkClick}>
           <img src={productImage} alt="" />
         </NavLink>
         <div className={styles.titleAndPrice}>
-          <NavLink to={`/products/${productType}/${productId}`}>
+          <NavLink to={`/products/${productType}/${productId}`} onClick={handleNavLinkClick}>
             <p className={styles.productTitle}>{productTitle}</p>
           </NavLink>
           <p className={styles.totalPrice}>${totalPrice}</p>
