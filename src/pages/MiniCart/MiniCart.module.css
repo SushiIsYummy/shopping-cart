@@ -8,6 +8,8 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition: right 0.3s ease-in-out;
   z-index: 100;
+  border-left: 1px solid rgb(0, 0, 0);
+  border-radius: 5px;
 }
 
 .miniCartContainer.open {
@@ -62,16 +64,30 @@
   padding: 20px;
 }
 
+.cartItems > *:not(header) {
+  border-bottom: 1px solid rgb(180, 174, 174);
+}
+.cartItems > *:last-child {
+  border: none;
+}
+
 .miniCartFooter {
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 20px;
+  border-top: 1px solid rgb(180, 174, 174);
 }
 
 .totalText {
   font-size: 1.5rem;
-  text-align: right;
+  text-align: start;
+}
+
+.totalText p {
+  font-size: 0.9rem;
+  text-align: start;
+  color: gray;
 }
 
 .viewCartButton {
@@ -120,7 +136,7 @@
   }
 
   .cartItems {
-    overflow-y: scroll;
-    max-height: 50vh;
+    /* overflow-y: scroll; */
+    /* max-height: 50vh; */
   }
 }

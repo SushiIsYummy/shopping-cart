@@ -66,7 +66,10 @@ function MiniCart({
               })}
             </div>
             <div className={styles.miniCartFooter}>
-              <h1 className={styles.totalText}>Total: ${subtotalRounded}</h1>
+              <h1 className={styles.totalText}>
+                Subtotal: ${subtotalRounded}
+                <p>Shipping & taxes are calculated at checkout</p>
+              </h1>
               <NavLink to={'/cart'} onClick={handleNavLinkClick}>
                 <button className={styles.viewCartButton}>VIEW CART</button>
               </NavLink>
