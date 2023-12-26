@@ -25,7 +25,6 @@ import { addToCart } from '../../cartItemsLocalStorage';
 
 function Shop() {
   // const { popularAnime } = useLoaderData();
-  const options = ['popularity', 'AZ', 'ZA', 'newest', 'oldest'];
   const [productsData, setProductsData] = useState(null);
   const [genresData, setGenresData] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -210,20 +209,22 @@ function Shop() {
               </button>
               <div className={styles.sortByContainer}>
                 <p>Sort by &nbsp;</p>
-                <select className={styles.sortBsy}
+                <select 
+                  className={styles.sortBsy}
+                  value={sortByParam ? sortByParam : 'popularity'}
                   onChange={(e) => {
                     setSearchParams((searchParams) => {
                       const updatedSearchParams = new URLSearchParams(searchParams);
                       updatedSearchParams.set('page', '1');
-                      updatedSearchParams.set('sortBy', options[Number(e.target.value)]);
+                      updatedSearchParams.set('sortBy', e.target.value);
                       return updatedSearchParams;
                     })
                   }}>
-                  <option value="0" selected={sortByParam === 'popularity'}>Popularity</option>
-                  <option value="1" selected={sortByParam === 'AZ'}>Name: A-Z</option>
-                  <option value="2" selected={sortByParam === 'ZA'}>Name: Z-A</option>
-                  <option value="3" selected={sortByParam === 'newest'}>Newest to Oldest</option>
-                  <option value="4" selected={sortByParam === 'oldest'}>Oldest to Newest</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="AZ">Name: A-Z</option>
+                  <option value="ZA">Name: Z-A</option>
+                  <option value="newest">Newest to Oldest</option>
+                  <option value="oldest">Oldest to Newest</option>
                 </select>
               </div>
 

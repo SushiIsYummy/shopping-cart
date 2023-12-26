@@ -16,12 +16,26 @@ function MiniCart({
   const subtotal = itemsData.reduce((itemCount, item) => { return itemCount + Number(item.quantity)*Number(item.price); }, 0);
   const subtotalRounded = Number(+(Math.round(subtotal* 100 / 100 + "e+2")  + "e-2")).toFixed(2);
 
-  // prevent page from scrolling when mini cart is opened
+  // prevent page from scrolling when mini cart is opened.
+  // add margin right to replace width of disappearing scrollbar (if there is)
+  // so that the page doesn't move to the right.
   useEffect(() => {
     const body = document.body;
-    body.style.overflow = isOpen ? 'hidden' : 'auto';
+
+    function verticalScrollbarVisible() {
+      return window.innerWidth > body.clientWidth;
+    }
+
+    if (isOpen) {
+      if (verticalScrollbarVisible()) {
+        let scrollbarLength = window.innerWidth - body.clientWidth;
+        body.style.marginRight = isOpen ? `${scrollbarLength}px` : '0px';
+      }
+      body.style.overflow = isOpen ? 'hidden' : 'auto';
+    }
     return () => {
       body.style.overflow = 'auto';
+      body.style.marginRight = '0px';
     };
   }, [isOpen]);
 
