@@ -5,17 +5,23 @@ import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 import { 
   Outlet,
   NavLink,
+  useLocation,
+  useNavigate,
+  useNavigation
 } from "react-router-dom";
 import Searchbar from '../Searchbar/Searchbar';
 import { useMediaQuery } from '@react-hook/media-query';
 import { getTotalItemsInCart } from '../../cartItemsLocalStorage';
 import MiniCart from '../../pages/MiniCart/MiniCart';
+import { useMiniCart } from '../../pages/MiniCart/MiniCartContext';
+import LoadingOverlay from '../LoadingOverlay/LoadingOverlay';
 
 function Header() {
   const [searchInput, setSearchInput] = useState('');
   const [totalItems, setTotalItems] = useState(getTotalItemsInCart());
-  const [miniCartIsOpen, setMiniCartIsOpen] = useState(false);
   const outsideNav = useMediaQuery('(max-width: 768px)');
+  const { cartIsOpen, openMiniCart, closeMiniCart } = useMiniCart();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const handleCartItemsChange = () => {
@@ -28,10 +34,6 @@ function Header() {
       window.removeEventListener('cartItemsChanged', handleCartItemsChange);
     };
   }, []);
-
-  function handleCartClick() {
-    setMiniCartIsOpen(!miniCartIsOpen);
-  }
 
   return (
     <>
@@ -49,11 +51,11 @@ function Header() {
             <NavLink to={`/shop`}>
               Shop
             </NavLink>
-            <div className={styles.cartIconContainer} onClick={handleCartClick}>
+            <div className={styles.cartIconContainer} onClick={() => openMiniCart()}>
               <FontAwesomeIcon className={styles.shoppingCart} icon={faShoppingCart}></FontAwesomeIcon>
               {totalItems > 0 &&
               <span>
-                <p onClick={handleCartClick}>
+                <p onClick={() => openMiniCart()}>
                   {totalItems}
                 </p>
               </span>}
@@ -63,9 +65,9 @@ function Header() {
         {outsideNav && <Searchbar customStyles={styles} searchInput={searchInput} setSearchInput={setSearchInput}/>}
       </header>
       <main>
+        {navigation.state === 'loading' && <LoadingOverlay />}
         <Outlet />
       </main>
-      <MiniCart isOpen={miniCartIsOpen} setMiniCartIsOpen={setMiniCartIsOpen}/>
     </>
   )
 }

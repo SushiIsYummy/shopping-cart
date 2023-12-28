@@ -1,0 +1,39 @@
+.modal {
+  position: relative;
+  padding: 10px 20px;
+  box-shadow: rgba(0, 0, 0, 0.95) 0px 5px 15px;
+  opacity: 0;
+  width: fit-content;
+  z-index: 100;
+}
+
+.modal.success {
+  background-color: green;
+}
+
+.modal.fail {
+  background-color: red;
+}
+
+.modal.open {
+  opacity: 100;
+  transition: opacity 1s;
+}
+
+.modal.close {
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.modalArea {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  z-index: 12;
+}

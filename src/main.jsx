@@ -10,14 +10,22 @@ import Header from './components/Header/Header';
 import ErrorPage from './pages/ErrorPage';
 import Shop from './pages/Shop/Shop';
 import Cart from './pages/Cart/Cart';
+import MiniCart from './pages/MiniCart/MiniCart';
 import ProductInfo from './pages/ProductInfo/ProductInfo';
 import { loader as HomeLoader } from './pages/Home/Home';
 import { loader as ProductInfoLoader } from './pages/ProductInfo/ProductInfo';
 // import { loader as ShopLoader } from './pages/Shop/Shop';
-
+import { MiniCartProvider } from './pages/MiniCart/MiniCartContext';
 const router = createBrowserRouter([
   {
-    element: <Header />,
+    element: (
+      <MiniCartProvider>
+        <div>
+          <Header />
+          <MiniCart />
+        </div>
+      </MiniCartProvider>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {

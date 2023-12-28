@@ -64,6 +64,7 @@
   border-radius: 50%;
   font-weight: bold;
   color: white;
+  cursor: pointer;
 }
 
 .shoppingCart {

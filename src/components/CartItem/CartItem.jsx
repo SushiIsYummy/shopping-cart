@@ -7,18 +7,16 @@ function CartItem({
   handleNavLinkClick,
 }) {
   const { quantity, productId, productType, price, productTitle, productImage } = itemData;
-  const [itemQuantity, setItemQuantity] = useState(itemData.quantity);
   const [totalPrice, setTotalPrice] = useState(Number(quantity)*Number(price));
 
   useEffect(() => {
-    setTotalPrice(Number(itemQuantity)*Number(price));
-  }, [itemQuantity, price]);
+    setTotalPrice(Number(quantity)*Number(price));
+  }, [quantity, price]);
 
 
   function handleQuantityChange(e) {
     let newQuantity = e.target.value;
     changeCartItemQuantity(productId, productType, newQuantity);
-    setItemQuantity(newQuantity);
   }
 
   function handleRemoveItem() {
@@ -26,7 +24,7 @@ function CartItem({
   }
 
   return (
-    <div className={styles.cartItem}>
+    <div className={styles.cartItem} data-id={`${productType}-${productId}`}>
       <div className={styles.topPart}>
         <NavLink to={`/products/${productType}/${productId}`} onClick={handleNavLinkClick}>
           <img src={productImage} alt="" />
@@ -40,7 +38,7 @@ function CartItem({
       </div>
       <div className={styles.bottomPart}>
         <p className={styles.quantity}>Quantity: &nbsp;
-          <select onChange={handleQuantityChange} value={itemQuantity}>
+          <select onChange={handleQuantityChange} value={quantity}>
             {Array.from({ length: 3 }, (_, index) => (
               <option key={index}>{index + 1}</option>
             ))}

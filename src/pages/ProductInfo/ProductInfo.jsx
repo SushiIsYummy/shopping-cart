@@ -11,6 +11,11 @@ import formatPublishDates from '../../utils/formatPublishDates';
 import StarRating from '../../components/StarRating/StarRating';
 import generateFakePrice from '../../utils/generateFakePrice';
 import { addToCart } from '../../cartItemsLocalStorage';
+import AddToCartModal from '../../components/AddToCartModal/AddToCartModal';
+import { useMiniCart } from '../MiniCart/MiniCartContext';
+import { useEffect, useRef } from 'react';
+import { AddToCartModals } from '../../components/AddToCartModal/AddToCartModal';
+import { MiniCartProvider } from '../MiniCart/MiniCartContext';
 
 export async function loader({ params }) {
   const productType = params.productType;
@@ -32,13 +37,15 @@ export async function loader({ params }) {
 
 function ProductInfo() {
   const [quantity, setQuantity] = useState(1);
-
-
+  const [modals, setModals] = useState([]);
+  const { cartIsOpen, openMiniCart, closeMiniCart, miniCartItems, scrollToMiniCartItem } = useMiniCart();
   const { productInfo, productType } = useLoaderData();
-  console.log(productInfo);
+  const navigate = useNavigate();
+
+  // console.log(modals)
+  // console.log(productInfo);
   const originalRating = productInfo.data.score;
   const ratingOutOfFive = Number(+(Math.round(Math.floor(originalRating/2 * 100) / 100 + "e+2")  + "e-2")).toFixed(2);
-  const navigate = useNavigate();
   const publishedDate = productType === 'manga' ? formatPublishDates(productInfo.data.published.from, productInfo.data.published.to) : null;
   const productTitle = productInfo.data.title;
   const productId = productInfo.data.mal_id;
@@ -53,12 +60,25 @@ function ProductInfo() {
     newItem['productImage'] = productImage;
     newItem['productTitle'] = productTitle;
     newItem['price'] = fakePrice;
-    addToCart(newItem);
+    let addedToCart = addToCart(newItem);
+    addModal(addedToCart);
+    openMiniCart();
+    scrollToMiniCartItem(productType, productId);
   }
 
   function handleQuantityChange(e) {
     console.log(typeof e.target.value);
     setQuantity(Number(e.target.value));
+  }
+
+  function addModal(success) {
+    let modalId = crypto.randomUUID();
+    setModals((prevModals) => [...prevModals, 
+      { 
+        message: success ? 'Product added to cart' : 'Max 3 quantity allowed per product', 
+        success: success ? true : false,
+        id: modalId,
+      }])
   }
 
   return (
@@ -115,6 +135,7 @@ function ProductInfo() {
             </select>
           </p>
           <button className='add-to-cart' onClick={handleAddToCartClick}>ADD TO CART</button>
+          <AddToCartModals modals={modals} setModals={setModals} position={'center'}></AddToCartModals>
           <div className="synopsis-section">
             <p className='synopsis-header'>Synopsis</p>
             <p className='synopsis'>{productInfo.data.synopsis ? productInfo.data.synopsis : 'No synopsis available.'}</p>

@@ -16,7 +16,8 @@ import Pagination from '../../components/Pagination/Pagination';
 import Filter from '../../components/Filter/Filter';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import { addToCart } from '../../cartItemsLocalStorage';
-
+import { AddToCartModals } from '../../components/AddToCartModal/AddToCartModal';
+import { useMiniCart } from '../MiniCart/MiniCartContext';
 // export async function loader() {
 //   const popularAnime = await getPopularAnimeInfo();
 //   console.log(popularAnime);
@@ -25,6 +26,7 @@ import { addToCart } from '../../cartItemsLocalStorage';
 
 function Shop() {
   // const { popularAnime } = useLoaderData();
+  const [modals, setModals] = useState([]);
   const [productsData, setProductsData] = useState(null);
   const [genresData, setGenresData] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -32,7 +34,7 @@ function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
-
+  const { cartIsOpen, openMiniCart, closeMiniCart } = useMiniCart();
   let hasProducts = productsData?.data?.length > 0;
 
   // url search params
@@ -183,6 +185,16 @@ function Shop() {
     })
   }
 
+  function addModal(success) {
+    let modalId = crypto.randomUUID();
+    setModals((prevModals) => [...prevModals, 
+      { 
+        message: success ? 'Product added to cart' : 'Max 3 quantity allowed per product', 
+        success: success ? true : false,
+        id: modalId,
+      }])
+  }
+
   return (
     <>
       {isLoadingProductsData && <LoadingOverlay />}
@@ -252,14 +264,16 @@ function Shop() {
                 // sometimes the api response has 2+ items with the same 'mal_id'
                 <ShopItem 
                   key={index} 
-                  productTypeParam={productTypeParam} 
+                  productType={productTypeParam} 
                   productData={product} 
                   ratingOutOfFive={ratingOutOfFive}
+                  addModal={addModal}
                 />
               )
             })}
           </div>
         </div>
+        <AddToCartModals modals={modals} setModals={setModals}></AddToCartModals>
         {hasProducts && totalPages > 1 &&
           <Pagination 
             totalPages={totalPages} 
@@ -277,22 +291,49 @@ function Shop() {
 }
 
 function ShopItem({
-  productTypeParam,
+  productType,
   productData,
   ratingOutOfFive,
+  addModal,
 }) {
   const [itemQuantity, setItemQuantity] = useState(1);
-  // console.log(productData);
-  const fakePrice = generateFakePrice(productData.title);
+  // const [newItemAddedToCart, setNewItemAddedToCart] = useState(false);
+
+  const { cartIsOpen, openMiniCart, closeMiniCart, miniCartItems, scrollToMiniCartItem } = useMiniCart();
+
+  const productId = productData.mal_id;
+  const productImage = productData.images.jpg.large_image_url;
+  const productTitle = productData.title;
+  const fakePrice = generateFakePrice(productTitle);
+  
+  // useEffect(() => {
+  //   let childToScroll = null;
+
+  //   if (miniCartItems?.current?.children) {
+  //     childToScroll = Array.from(miniCartItems?.current?.children).find(
+  //       (child) => child.getAttribute('data-id') === `${productTypeParam}-${productId}`
+  //     );
+  //   }
+
+  //   if (newItemAddedToCart && childToScroll) {
+  //     childToScroll.scrollIntoView({ block: 'nearest' });
+  //     setNewItemAddedToCart(false);
+  //   }
+  // }, [newItemAddedToCart, miniCartItems, productId, productTypeParam]);
+
   function handleAddToCartClick() {
     let newItem = {};
     newItem['quantity'] = itemQuantity;
-    newItem['productId'] = productData.mal_id;
-    newItem['productType'] = productTypeParam;
-    newItem['productImage'] = productData.images.jpg.large_image_url;
-    newItem['productTitle'] = productData.title;
+    newItem['productId'] = productId;
+    newItem['productType'] = productType;
+    newItem['productImage'] = productImage;
+    newItem['productTitle'] = productTitle;
     newItem['price'] = fakePrice;
-    addToCart(newItem);
+    let addedToCart = addToCart(newItem);
+    addModal(addedToCart);
+    openMiniCart();
+    scrollToMiniCartItem(productType, productId);
+    console.log(miniCartItems.current)
   }
 
   function handleQuantityChange(e) {
@@ -303,11 +344,11 @@ function ShopItem({
   return (
     <div className={styles.itemInfoContainer}>
       <div className={styles.itemInfo}>
-        <NavLink to={`/products/${productTypeParam}/${productData.mal_id}`}>
-          <img src={productData.images.jpg.large_image_url} alt="" />
+        <NavLink to={`/products/${productType}/${productId}`}>
+          <img src={productImage} alt="" />
         </NavLink>
-        <NavLink to={`/products/${productTypeParam}/${productData.mal_id}`}>
-          <p className={styles.itemTitle}>{productData.title}</p>
+        <NavLink to={`/products/${productType}/${productId}`}>
+          <p className={styles.itemTitle}>{productTitle}</p>
         </NavLink>
         <div className={styles.starRatingContainer}>
           <p className={styles.ratingDecimal}>{ratingOutOfFive}</p>

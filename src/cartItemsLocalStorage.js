@@ -13,12 +13,18 @@ export function addToCart(newItem) {
   let cartItem = getCartItem(newItem.productId, newItem.productType);
   if (cartItem) {
     let newQuantity = Number(cartItem.quantity) + Number(newItem.quantity);
-    changeCartItemQuantity(cartItem.productId, cartItem.productType, newQuantity);
+    let changedQuantity = changeCartItemQuantity(cartItem.productId, cartItem.productType, newQuantity);
+    if (!changedQuantity) {
+      window.dispatchEvent(new Event('cartItemsChanged'));
+      return false;
+    }
     window.dispatchEvent(new Event('cartItemsChanged'));
   } else {
     localStorage.setItem(cartItemsName, JSON.stringify([...oldCartItems, newItem]));
     window.dispatchEvent(new Event('cartItemsChanged'));
   }
+  window.dispatchEvent(new Event('cartItemsChanged'));
+  return true;
 }
 
 export function removeFromCart(productId, productType) {
@@ -52,7 +58,6 @@ export function getTotalItemsInCart() {
 
 export function changeCartItemQuantity(productId, productType, newQuantity) {
   if (Number(newQuantity) > maxQuantity) {
-    console.log('QUANTITY EXCEEDED!');
     return false;
   }
   let cartItems = getCartItemsLocalStorage();
@@ -61,8 +66,8 @@ export function changeCartItemQuantity(productId, productType, newQuantity) {
     cartItems[index].quantity = Number(newQuantity);
     localStorage.setItem(cartItemsName, JSON.stringify(cartItems));
     window.dispatchEvent(new Event('cartItemsChanged'));
+    return true;
   }
-  return true;
 }
 
 export function getCartItemsLocalStorage() {

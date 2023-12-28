@@ -45,7 +45,7 @@ function Carousel({
           spaceBetween={10}
           slidesPerView={2.5}
         >
-          {productList.data.map((productData) =>
+          {productList?.data?.map((productData) =>
             <SwiperSlide key={productData.title}>
               <ProductImage
                 productImg={productData.images.jpg.large_image_url}

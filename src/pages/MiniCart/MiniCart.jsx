@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react';
 import { 
   NavLink, 
 } from 'react-router-dom';
+import { useMiniCart } from './MiniCartContext';
 
 function MiniCart({
-  isOpen,
+  // isOpen: cartIsOpen,
   setMiniCartIsOpen,
 }) {
   const [itemsData, setItemsData] = useState(getCartItemsLocalStorage());
@@ -15,6 +16,8 @@ function MiniCart({
   const totalItems = itemsData.reduce((itemCount, item) => { return itemCount + Number(item.quantity); }, 0);
   const subtotal = itemsData.reduce((itemCount, item) => { return itemCount + Number(item.quantity)*Number(item.price); }, 0);
   const subtotalRounded = Number(+(Math.round(subtotal* 100 / 100 + "e+2")  + "e-2")).toFixed(2);
+
+  const { cartIsOpen, openMiniCart, closeMiniCart, miniCartItems } = useMiniCart();
 
   // prevent page from scrolling when mini cart is opened.
   // add margin right to replace width of disappearing scrollbar (if there is)
@@ -26,18 +29,21 @@ function MiniCart({
       return window.innerWidth > body.clientWidth;
     }
 
-    if (isOpen) {
+    if (cartIsOpen) {
       if (verticalScrollbarVisible()) {
         let scrollbarLength = window.innerWidth - body.clientWidth;
-        body.style.marginRight = isOpen ? `${scrollbarLength}px` : '0px';
+        body.style.marginRight = cartIsOpen ? `${scrollbarLength}px` : '0px';
       }
-      body.style.overflow = isOpen ? 'hidden' : 'auto';
+      body.style.overflow = cartIsOpen ? 'hidden' : 'auto';
     }
+
     return () => {
+      if (verticalScrollbarVisible()) {
+        body.style.marginRight = '0px';
+      }
       body.style.overflow = 'auto';
-      body.style.marginRight = '0px';
     };
-  }, [isOpen]);
+  }, [cartIsOpen]);
 
   useEffect(() => {
     const handleCartItemsChange = () => {
@@ -52,29 +58,31 @@ function MiniCart({
   }, []);
 
   function handleNavLinkClick() {
-    setMiniCartIsOpen(false);
+    closeMiniCart();
+    // setMiniCartIsOpen(false);
   }
 
   return (
     <>
-      <div className={`${styles.overlay} ${isOpen ? styles.open : ''}`} onClick={() => setMiniCartIsOpen(false)}></div>
-      <div className={`${styles.miniCartContainer} ${isOpen ? styles.open : ''}`}>
+      <div className={`${styles.overlay} ${cartIsOpen ? styles.open : ''}`} onClick={closeMiniCart}></div>
+      <div className={`${styles.miniCartContainer} ${cartIsOpen ? styles.open : ''}`}>
         <header>
           <div className={styles.headerLeft}>
             <i className='fa fa-2x fa-shopping-cart'></i>
             <h1>My Cart ({totalItems})</h1>
           </div>
-          <i className={`${styles.closeButton} fa fa-2x fa-close`} onClick={() => setMiniCartIsOpen(false)}></i>
+          <i className={`${styles.closeButton} fa fa-2x fa-close`} onClick={closeMiniCart}></i>
         </header>
         {totalItems > 0  ? (
           <div className={styles.miniCart}>
-            <div className={styles.cartItems}>
+            <div className={styles.cartItems} ref={miniCartItems}>
               {itemsData.map((item) => {
                 return (
                   <CartItem 
                     key={`${item.productId}-${item.productType}`} 
                     itemData={item}
                     handleNavLinkClick={handleNavLinkClick}
+                    dataId={`${item.productId}-${item.productType}`}
                   />
                 )
               })}
