@@ -1,17 +1,27 @@
 .searchbar {
+  position: relative;
   display: flex;
-  height: 60px;
+  height: 35px;
+  flex: 1;
   width: 100%;
   background-color: black;
-  padding: 10px;
+}
+
+.searchInputContainer {
+  position: relative;
+  display: flex;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  flex: 1;
 }
 
 .searchInput {
-  border: none;
-  outline: none;
-  padding: 0 5px;
-  font-size: 1rem;
   flex: 1;
+  padding-left: 5px;
+  padding-right: 25px;
+  outline: none;
+  width: 0;
 }
 
 .submitButton {
@@ -22,15 +32,18 @@
 }
 
 .resetButtonContainer {
+  position: absolute;
+  height: 100%;
+  right: 10px;
+  width: fit-content;
   display: flex;
   align-items: center;
-  background-color: white;
+  background-color: transparent;
 }
 
 .resetButton {
   border: none;
-  background-color: white;
-  margin-right: 5px;
+  background-color: transparent;
 }
 
 .resetButton i:hover {

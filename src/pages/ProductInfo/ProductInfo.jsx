@@ -19,7 +19,7 @@ import { MiniCartProvider } from '../MiniCart/MiniCartContext';
 
 export async function loader({ params }) {
   const productType = params.productType;
-  console.log(productType)
+  // console.log(productType)
   let productInfo;
   if (productType === 'anime') {
     productInfo = await getAnimeInfo(params.productId);
@@ -47,7 +47,7 @@ function ProductInfo() {
   const originalRating = productInfo.data.score;
   const ratingOutOfFive = Number(+(Math.round(Math.floor(originalRating/2 * 100) / 100 + "e+2")  + "e-2")).toFixed(2);
   const publishedDate = productType === 'manga' ? formatPublishDates(productInfo.data.published.from, productInfo.data.published.to) : null;
-  const productTitle = productInfo.data.title;
+  const productTitle = productInfo.data?.title_english || productInfo.data?.title;
   const productId = productInfo.data.mal_id;
   const productImage = productInfo.data.images.jpg.large_image_url;
   const fakePrice = generateFakePrice(productTitle);

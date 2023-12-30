@@ -5,9 +5,9 @@ import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 import { 
   Outlet,
   NavLink,
-  useLocation,
   useNavigate,
-  useNavigation
+  useNavigation,
+  useSearchParams,
 } from "react-router-dom";
 import Searchbar from '../Searchbar/Searchbar';
 import { useMediaQuery } from '@react-hook/media-query';
@@ -17,7 +17,9 @@ import { useMiniCart } from '../../pages/MiniCart/MiniCartContext';
 import LoadingOverlay from '../LoadingOverlay/LoadingOverlay';
 
 function Header() {
-  const [searchInput, setSearchInput] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchInputParam = searchParams.get('search');
+  const [searchInput, setSearchInput] = useState(searchInputParam || '');
   const [totalItems, setTotalItems] = useState(getTotalItemsInCart());
   const outsideNav = useMediaQuery('(max-width: 768px)');
   const { cartIsOpen, openMiniCart, closeMiniCart } = useMiniCart();
@@ -35,6 +37,12 @@ function Header() {
     };
   }, []);
 
+  useEffect(() => {
+    if (navigation.state === 'loading') {
+      setSearchInput('');
+    }
+  }, [navigation.state])
+
   return (
     <>
       <header className={styles.header}>
@@ -43,12 +51,12 @@ function Header() {
             <h1 className={styles.storeName}>AnimeStore</h1>
           </NavLink>
           {!outsideNav && 
-          <Searchbar searchInput={searchInput} setSearchInput={setSearchInput}/>}
+          <Searchbar searchInput={searchInput} setSearchInput={setSearchInput} productsList={['anime', 'manga']}/>}
           <div className={styles.mainNav}>
             <NavLink className={styles.logo} to={`/`}>
               Home
             </NavLink>
-            <NavLink to={`/shop`}>
+            <NavLink to={`/shop`} onClick={() => setSearchInput('')}>
               Shop
             </NavLink>
             <div className={styles.cartIconContainer} onClick={() => openMiniCart()}>
@@ -62,7 +70,13 @@ function Header() {
             </div>
           </div>
         </nav>
-        {outsideNav && <Searchbar customStyles={styles} searchInput={searchInput} setSearchInput={setSearchInput}/>}
+        {outsideNav && (
+          <Searchbar 
+            customStyles={styles} 
+            searchInput={searchInput} 
+            setSearchInput={setSearchInput} 
+          />
+        )}
       </header>
       <main>
         {navigation.state === 'loading' && <LoadingOverlay />}

@@ -86,9 +86,14 @@
   }
 }
 
+@media screen and (min-width: 769px) {
+  .headerNav {
+    padding-bottom: 20px;
+  }
+}
+
 @media screen and (min-width: 1000px) {
   .headerNav {
-    padding-top: 10px;
     padding-left: 30px;
     padding-right: 30px;
   }

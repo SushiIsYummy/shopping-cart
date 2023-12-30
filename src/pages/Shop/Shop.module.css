@@ -53,6 +53,9 @@
 }
 
 .paginationInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   padding: 10px 0;
 }
 
@@ -175,9 +178,11 @@ button.addToCart {
     justify-content: space-between;
   }
 
-  .back {
+  .backContainer {
     flex: 3;
     margin-bottom: 0;
+    display: flex;
+    align-items: center;
   }
 
   .buttonAndSelect {

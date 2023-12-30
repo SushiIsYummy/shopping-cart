@@ -26,7 +26,6 @@ export const MiniCartProvider = ({ children }) => {
         childToScroll.scrollIntoView({ block: 'nearest' });
         setInitiateScroll(false);
       }
-      console.log('SCROLLED TO TARGETED CART ITEM');
     }
   }, [initiateScroll, miniCartItems, productId, productType]);
 

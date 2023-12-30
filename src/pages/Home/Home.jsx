@@ -8,18 +8,12 @@ import { DateTime } from 'luxon';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
-import { useState } from 'react';
 import { useMediaQuery } from '@react-hook/media-query';
-// SwiperCore.use([Autoplay]);
 
 export async function loader() {
   const anime = await getNewSeasonalAnimeList();
   const manga = await getNewSeasonalMangaList();
-  console.log(anime)
   return { anime, manga };
-}
-
-export async function action() {
 }
 
 function Home() {

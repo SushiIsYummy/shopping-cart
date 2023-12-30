@@ -4,6 +4,7 @@ import {
   useSearchParams, 
 } from "react-router-dom";
 import styles from './Filter.module.css';
+import { capitalize } from "lodash";
 
 function Filter({
   genresData,
@@ -49,9 +50,13 @@ function Filter({
       if (value === '') {
         updatedSearchParams.delete(key);
       }
+      if (value.length === 0) {
+        updatedSearchParams.delete(key);
+      }
     });
     updatedSearchParams.set('page', '1');
     setSearchParams(updatedSearchParams);
+    // console.log('FILTERED!')
   };
 
   const handleReset = () => {
@@ -95,7 +100,7 @@ function Filter({
     <Form className={styles.filterContainer} onSubmit={handleSubmit}>
       <div className={styles.filterOption}>
         <div className={styles.categoryHeader} onClick={() => handleCategoryClick('products')}>
-          <div className={styles.category}>Products</div>
+          <div className={styles.category}>Products ({capitalize(productTypeParam)})</div>
           <div className={styles.plusMinus}>{openCategories['products'] ? '-' : '+'}</div>
         </div>
         <div className={`${styles.options} ${(openCategories['products'] !== null && !openCategories['products'] && `${styles.hide}`) || ''}`}>

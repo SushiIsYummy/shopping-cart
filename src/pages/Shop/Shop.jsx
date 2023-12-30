@@ -34,10 +34,10 @@ function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
-  const { cartIsOpen, openMiniCart, closeMiniCart } = useMiniCart();
   let hasProducts = productsData?.data?.length > 0;
 
   // url search params
+  let searchInputParam = searchParams.get('search');
   let sortByParam = searchParams.get('sortBy');
   let productTypeParam = searchParams.get('productType');
   let pageParam = searchParams.get('page');
@@ -70,7 +70,7 @@ function Shop() {
     }
     if (changed) {
       setSearchParams(updatedSearchParams);
-      console.log('SET DEFAULT PARAMS');
+      // console.log('SET DEFAULT PARAMS');
     }
   }, [searchParams, pageParam, sortByParam, productTypeParam, setSearchParams]);
 
@@ -79,16 +79,16 @@ function Shop() {
       let genresData = null;
       if (productTypeParam && productTypeParam === 'anime') {
         genresData = await getAnimeGenres();
-        console.log('got anime genres')
+        // console.log('got anime genres')
       } else if (productTypeParam && productTypeParam === 'manga') {
         genresData = await getMangaGenres();
-        console.log('got manga genres')
+        // console.log('got manga genres')
       }
       setGenresData(genresData);
     }
 
-    console.log('ENTERING FETCH GENRES');
-    console.log(`productType param: ${productTypeParam}`);
+    // console.log('ENTERING FETCH GENRES');
+    // console.log(`productType param: ${productTypeParam}`);
     
     if (productTypeParam) {
       // add timeout in development to prevent 429 too many requests
@@ -99,14 +99,14 @@ function Shop() {
       // }, 1000);
     }
     
-    console.log('LEAVING FETCH GENRES');
+    // console.log('LEAVING FETCH GENRES');
 
   }, [productTypeParam]);
 
   useEffect(() => {
     async function fetchProductsData() {
-      let updatedData = null;
-      
+      let updatedData = null; 
+      // console.log(`filter params: ${filterParams}`);
       if (productTypeParam === 'anime') {
         if (sortByParam === 'popularity') {
           updatedData = await getPopularAnimeInfo(pageParam, filterParams);
@@ -119,7 +119,7 @@ function Shop() {
         } else if (sortByParam === 'oldest') {
           updatedData = await getOldestAnimeInfo(pageParam, filterParams);
         }
-        console.log('got anime info!');
+        // console.log('got anime info!');
       } else if (productTypeParam === 'manga') {
         if (sortByParam === 'popularity') {
           updatedData = await getPopularMangaInfo(pageParam, filterParams);
@@ -132,12 +132,12 @@ function Shop() {
         } else if (sortByParam === 'oldest') {
           updatedData = await getOldestMangaInfo(pageParam, filterParams);
         }
-        console.log('got manga info!');
+        // console.log('got manga info!');
       }
       setProductsData(updatedData);
       setIsLoadingProductsData(false);
     }
-    console.log('ENTERING FETCH PRODUCTS');
+    // console.log('ENTERING FETCH PRODUCTS');
 
     if (pageParam && sortByParam && productTypeParam && !isLoadingProductsData) {
       // add timeout in development to prevent 429 too many requests
@@ -148,9 +148,9 @@ function Shop() {
         fetchProductsData();
       }, 2000);
     }
-    console.log('LEAVING FETCH PRODUCTS');
+    // console.log('LEAVING FETCH PRODUCTS');
 
-  }, [productTypeParam, pageParam, filterParams, sortByParam]);
+  }, [searchParams, productTypeParam, pageParam, filterParams, sortByParam]);
 
   function getFilterParams() {
     let genreIds = [];
@@ -163,21 +163,23 @@ function Shop() {
     }
     
     let filterParams = '';
+    if (searchInputParam && searchInputParam !== '') {
+      filterParams = filterParams.concat(`q=${searchInputParam}&`);
+    }
     if (genreIds.length > 0) {
-      filterParams = filterParams.concat(`genres=${genreIds}`);
+      filterParams = filterParams.concat(`genres=${genreIds}&`);
     }
     if (minScoreParam) {
-      filterParams = filterParams.concat(`&min_score=${Math.round(minScoreParam*2 + "e+2")  + "e-2"}`);
+      filterParams = filterParams.concat(`min_score=${Math.round(minScoreParam*2 + "e+2")  + "e-2"}&`);
     }
     if (maxScoreParam) {
-      filterParams = filterParams.concat(`&max_score=${maxScoreParam*2}`);
+      filterParams = filterParams.concat(`max_score=${maxScoreParam*2}&`);
     }
 
     return filterParams;
   }
 
   function handlePageChange(pageNumber) {
-    console.log('CHANGED PAGE!');
     setSearchParams((searchParams) => {
       const updatedSearchParams = new URLSearchParams(searchParams);
       updatedSearchParams.set('page', pageNumber.toString());
@@ -207,10 +209,12 @@ function Shop() {
         <div className={styles.sortAndFilter}>
           <div className={styles.topBlock}>
             {!isSmallScreen &&
-            <p className={styles.back} onClick={() => { navigate(-1) }}>
-              <i className='fa fa-2xs fa-solid fa-arrow-left'></i>
-              Back
-            </p>}
+            <div className={styles.backContainer}>
+              <p className={styles.back} onClick={() => { navigate(-1) }}>
+                <i className='fa fa-2xs fa-solid fa-arrow-left'></i>
+                Back
+              </p>
+            </div>}
             <div className={styles.buttonAndSelect}>
               <button 
                 type='button' 
@@ -247,11 +251,13 @@ function Shop() {
             genresData={genresData ? genresData.data : []} 
           />}
         </div>
-        <p className={styles.paginationInfo}>
+        <div className={styles.paginationInfo}>
+          {!isLoadingProductsData && !searchInputParam && <p>Displaying results for all {productTypeParam}</p>}
+          {!isLoadingProductsData && searchInputParam && <p>Displaying results for "{searchInputParam}" for all {productTypeParam}</p>}
           {!isLoadingProductsData && hasProducts && `Showing ${paginationStartIndex}-${paginationEndIndex} of ${totalItems} Total Products`}
           {!isLoadingProductsData && !(hasProducts) &&  `No Products Found.`}
           {isLoadingProductsData && 'Loading Products...'}
-        </p>
+        </div>
         <div className={styles.filterAndItems}>
           {showFilters && !isSmallScreen &&
           <Filter 
@@ -297,29 +303,11 @@ function ShopItem({
   addModal,
 }) {
   const [itemQuantity, setItemQuantity] = useState(1);
-  // const [newItemAddedToCart, setNewItemAddedToCart] = useState(false);
-
   const { cartIsOpen, openMiniCart, closeMiniCart, miniCartItems, scrollToMiniCartItem } = useMiniCart();
-
   const productId = productData.mal_id;
   const productImage = productData.images.jpg.large_image_url;
-  const productTitle = productData.title;
+  const productTitle = productData?.title_english || productData.title;
   const fakePrice = generateFakePrice(productTitle);
-  
-  // useEffect(() => {
-  //   let childToScroll = null;
-
-  //   if (miniCartItems?.current?.children) {
-  //     childToScroll = Array.from(miniCartItems?.current?.children).find(
-  //       (child) => child.getAttribute('data-id') === `${productTypeParam}-${productId}`
-  //     );
-  //   }
-
-  //   if (newItemAddedToCart && childToScroll) {
-  //     childToScroll.scrollIntoView({ block: 'nearest' });
-  //     setNewItemAddedToCart(false);
-  //   }
-  // }, [newItemAddedToCart, miniCartItems, productId, productTypeParam]);
 
   function handleAddToCartClick() {
     let newItem = {};
@@ -333,7 +321,6 @@ function ShopItem({
     addModal(addedToCart);
     openMiniCart();
     scrollToMiniCartItem(productType, productId);
-    console.log(miniCartItems.current)
   }
 
   function handleQuantityChange(e) {

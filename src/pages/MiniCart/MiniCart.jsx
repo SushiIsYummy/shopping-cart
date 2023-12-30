@@ -7,10 +7,7 @@ import {
 } from 'react-router-dom';
 import { useMiniCart } from './MiniCartContext';
 
-function MiniCart({
-  // isOpen: cartIsOpen,
-  setMiniCartIsOpen,
-}) {
+function MiniCart() {
   const [itemsData, setItemsData] = useState(getCartItemsLocalStorage());
 
   const totalItems = itemsData.reduce((itemCount, item) => { return itemCount + Number(item.quantity); }, 0);
@@ -59,7 +56,6 @@ function MiniCart({
 
   function handleNavLinkClick() {
     closeMiniCart();
-    // setMiniCartIsOpen(false);
   }
 
   return (
@@ -82,7 +78,6 @@ function MiniCart({
                     key={`${item.productId}-${item.productType}`} 
                     itemData={item}
                     handleNavLinkClick={handleNavLinkClick}
-                    dataId={`${item.productId}-${item.productType}`}
                   />
                 )
               })}
