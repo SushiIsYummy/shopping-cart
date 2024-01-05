@@ -32,7 +32,6 @@ function Shop() {
   const [documentHeightGreaterThan100vh, setDocumentHeightGreaterThan100vh] = useState(true);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   let backToTopRef = useRef();
-  let backToTopCloneRef = useRef();
   const navigate = useNavigate();
   let hasProducts = productsData?.data?.length > 0;
 
@@ -180,7 +179,6 @@ function Shop() {
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
-      // console.log('HANDLED RESIZE');
       const viewportHeight = window.innerHeight;
       const documentHeight = Math.max(
         document.body.scrollHeight,
@@ -190,66 +188,12 @@ function Shop() {
         document.body.clientHeight,
         document.documentElement.clientHeight
       );
-      
-      if (backToTopCloneRef.current) {
-        // console.log(backToTopCloneRef.current);
-        // console.log(getHeightOfElement(backToTopCloneRef.current));
-        const backToTopStyles = getComputedStyle(backToTopCloneRef.current);
-        const elementHeight = backToTopCloneRef.current?.clientHeight || 0;
-        const elementMarginTop = backToTopStyles.marginTop;
-        // console.log(`element height: ${elementHeight}`);
-        // console.log(`element margin: ${backToTopStyles.marginTop}`);
-        // console.log(documentHeightGreaterThan100vh);
-        // console.log(documentHeight);
-        // console.log(viewportHeight)
-        setDocumentHeightGreaterThan100vh(documentHeight > viewportHeight);
-      }
+      setDocumentHeightGreaterThan100vh(documentHeight > viewportHeight);
     });
 
-    const handleResize = () => {
-      // console.log('HANDLED RESIZE');
-      const viewportHeight = window.innerHeight;
-      const documentHeight = Math.max(
-        document.body.scrollHeight,
-        document.documentElement.scrollHeight,
-        document.body.offsetHeight,
-        document.documentElement.offsetHeight,
-        document.body.clientHeight,
-        document.documentElement.clientHeight
-      );
-      
-      if (backToTopCloneRef.current) {
-        // console.log(backToTopCloneRef.current);
-        // console.log(getHeightOfElement(backToTopCloneRef.current));
-        const backToTopStyles = getComputedStyle(backToTopCloneRef.current);
-        const elementHeight = backToTopCloneRef.current?.clientHeight || 0;
-        const elementMarginTop = backToTopStyles.marginTop;
-        // console.log(`element height: ${elementHeight}`);
-        // console.log(`element margin: ${backToTopStyles.marginTop}`);
-        // console.log(documentHeightGreaterThan100vh);
-        // console.log(documentHeight);
-        // console.log(viewportHeight)
-        setDocumentHeightGreaterThan100vh(documentHeight > viewportHeight);
-      }
-    };
     resizeObserver.observe(document.documentElement);
-    // console.log('exists')
-    // Initial check
-    // handleResize();
-
-    // const observer = new MutationObserver(handleResize);
-
-    // Observe changes in the entire document
-    // observer.observe(document, { subtree: true, childList: true });
-
-    // Listen for resize events
-    
-    // window.addEventListener('resize', () => console.log('resized'));
-    
-    // Cleanup the event listener on component unmount
     return () => {
-      // window.removeEventListener('resize', () => console.log('resized'));
-      // observer.disconnect();
+      resizeObserver.disconnect();
     };
   }, []);
   
@@ -402,35 +346,8 @@ function Shop() {
       {hasProducts && documentHeightGreaterThan100vh &&
         <div ref={backToTopRef} className={styles.backToTop} onClick={() => window.scrollTo({ top: 0})}>Back to top</div>
       }
-      <div ref={backToTopCloneRef} style={{ position: 'fixed', visibility: 'hidden' }} className={styles.backToTop} onClick={() => window.scrollTo({ top: 0})}>Back to top</div>
     </>
   )
-}
-
-function getHeightOfElement(element) {
-  // Create a detached DOM node
-  const tempNode = document.createElement('div');
-
-  // Apply styles to the detached node (optional)
-  tempNode.style.position = 'absolute';
-  tempNode.style.visibility = 'hidden';
-
-  // Clone the target element (to avoid modifying the original)
-  const clonedElement = element.cloneNode(true);
-
-  // Append the cloned element to the detached node
-  tempNode.appendChild(clonedElement);
-
-  // Append the detached node to the body (to make it part of the DOM)
-  document.body.appendChild(tempNode);
-
-  // Get the height of the cloned element
-  const height = clonedElement.clientHeight;
-
-  // Remove the detached node from the DOM
-  document.body.removeChild(tempNode);
-
-  return height;
 }
 
 function ShopItem({

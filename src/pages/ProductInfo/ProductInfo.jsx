@@ -42,7 +42,7 @@ function ProductInfo() {
   const { cartIsOpen, openMiniCart, closeMiniCart, miniCartItems, scrollToMiniCartItem } = useMiniCart();
   const { productInfo, productType } = useLoaderData();
   const navigate = useNavigate();
-  console.log(productInfo)
+  
   const originalRating = productInfo.data.score;
   const ratingOutOfFive = Number(+(Math.round(Math.floor(originalRating/2 * 100) / 100 + "e+2")  + "e-2")).toFixed(2);
   const publishedDate = productType === 'manga' ? formatPublishDates(productInfo.data.published.from, productInfo.data.published.to) : null;
