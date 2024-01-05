@@ -11,9 +11,25 @@ import { Autoplay } from 'swiper/modules';
 import { useMediaQuery } from '@react-hook/media-query';
 
 export async function loader() {
-  const anime = await getNewSeasonalAnimeList();
-  const manga = await getNewSeasonalMangaList();
-  return { anime, manga };
+  try {
+    let anime = await getNewSeasonalAnimeList();
+    let manga = await getNewSeasonalMangaList();
+
+    // fetch data again if there is a 429 error
+    while (anime.status === '429' || manga.status === '429') {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      anime = await getNewSeasonalAnimeList();
+      manga = await getNewSeasonalMangaList();
+    }
+    return { anime, manga };
+    
+  } catch (error) {
+    console.error(error);
+    throw new Response("", {
+      status: 429,
+      statusText: "RateLimitException",
+    });
+  }
 }
 
 function Home() {
@@ -87,8 +103,8 @@ function Home() {
           </div>
         </div>
       </section>
-      <Carousel productType='anime' productList={anime} headerTitle={`New ${currentSeason} Anime ${currentYear}`}/>
-      <Carousel productType='manga' productList={manga} headerTitle={`New ${currentSeason} Manga ${currentYear}`}/>
+      <Carousel productType='anime' productList={anime} headerTitle={`${currentSeason} ${currentYear} Anime ${anime?.data?.length > 0 ? '' : '(Coming Soon!)'}`}/>
+      <Carousel productType='manga' productList={manga} headerTitle={`${currentSeason} ${currentYear} Manga ${manga?.data?.length > 0 ? '' : '(Coming Soon!)'}`}/>
     </div>
   )
 }

@@ -5,8 +5,8 @@ const animeStartDate = '1960-01-01';
 const animeEndDate = getCurrentSeasonParameters().end;
 
 export async function getNewSeasonalAnimeList() {
-  const { start, end } = getCurrentSeasonParameters();
-  const dateParams = `start_date=${start}&end_date=${end}`;
+  const { start } = getCurrentSeasonParameters();
+  const dateParams = `start_date=${start}`;
   const response = await fetch(`${baseUrl}/anime?${dateParams}`);
   const json = await response.json();
   return json;
@@ -27,30 +27,50 @@ export async function getAnimeInfo(animeId) {
 }
 
 export async function getPopularAnimeInfo(pageNumber = 1, filterParams) {
-  const response = await fetch(`${baseUrl}/anime?start_date=${animeStartDate}&order_by=popularity&page=${pageNumber}&${filterParams ? filterParams : ''}`);
+  const response = await fetch(
+    `${baseUrl}/anime?start_date=${animeStartDate}&order_by=popularity&page=${pageNumber}&${
+      filterParams ? filterParams : ''
+    }`
+  );
   const json = await response.json();
   return json;
 }
 
 export async function getSortedAZAnimeInfo(pageNumber = 1, filterParams) {
-  const response = await fetch(`${baseUrl}/anime?start_date=${animeStartDate}&order_by=title&page=${pageNumber}&${filterParams ? filterParams : ''}`);
+  const response = await fetch(
+    `${baseUrl}/anime?start_date=${animeStartDate}&order_by=title&page=${pageNumber}&${
+      filterParams ? filterParams : ''
+    }`
+  );
   const json = await response.json();
   return json;
 }
 
 export async function getSortedZAAnimeInfo(pageNumber = 1, filterParams) {
-  const response = await fetch(`${baseUrl}/anime?start_date=${animeStartDate}&order_by=title&sort=desc&page=${pageNumber}&${filterParams ? filterParams : ''}`);
+  const response = await fetch(
+    `${baseUrl}/anime?start_date=${animeStartDate}&order_by=title&sort=desc&page=${pageNumber}&${
+      filterParams ? filterParams : ''
+    }`
+  );
   const json = await response.json();
   return json;
 }
 
 export async function getOldestAnimeInfo(pageNumber = 1, filterParams) {
-  const response = await fetch(`${baseUrl}/anime?start_date=${animeStartDate}&end_date=${animeEndDate}&order_by=start_date&page=${pageNumber}&${filterParams ? filterParams : ''}`);
+  const response = await fetch(
+    `${baseUrl}/anime?start_date=${animeStartDate}&end_date=${animeEndDate}&order_by=start_date&page=${pageNumber}&${
+      filterParams ? filterParams : ''
+    }`
+  );
   const json = await response.json();
   return json;
 }
 export async function getNewestAnimeInfo(pageNumber = 1, filterParams) {
-  const response = await fetch(`${baseUrl}/anime?start_date=${animeStartDate}&end_date=${animeEndDate}&order_by=start_date&sort=desc&page=${pageNumber}&${filterParams ? filterParams : ''}`);
+  const response = await fetch(
+    `${baseUrl}/anime?start_date=${animeStartDate}&end_date=${animeEndDate}&order_by=start_date&sort=desc&page=${pageNumber}&${
+      filterParams ? filterParams : ''
+    }`
+  );
   const json = await response.json();
   return json;
 }
@@ -67,30 +87,50 @@ export async function getMangaInfo(mangaId) {
 }
 
 export async function getPopularMangaInfo(pageNumber = 1, filterParams) {
-  const response = await fetch(`${baseUrl}/manga?start_date=${animeStartDate}&order_by=popularity&page=${pageNumber}&${filterParams ? filterParams : ''}`);
+  const response = await fetch(
+    `${baseUrl}/manga?start_date=${animeStartDate}&order_by=popularity&page=${pageNumber}&${
+      filterParams ? filterParams : ''
+    }`
+  );
   const json = await response.json();
   return json;
 }
 
 export async function getSortedAZMangaInfo(pageNumber = 1, filterParams) {
-  const response = await fetch(`${baseUrl}/manga?start_date=${animeStartDate}&order_by=title&page=${pageNumber}&${filterParams ? filterParams : ''}`);
+  const response = await fetch(
+    `${baseUrl}/manga?start_date=${animeStartDate}&order_by=title&page=${pageNumber}&${
+      filterParams ? filterParams : ''
+    }`
+  );
   const json = await response.json();
   return json;
 }
 
 export async function getSortedZAMangaInfo(pageNumber = 1, filterParams) {
-  const response = await fetch(`${baseUrl}/manga?start_date=${animeStartDate}&order_by=title&sort=desc&page=${pageNumber}&${filterParams ? filterParams : ''}`);
+  const response = await fetch(
+    `${baseUrl}/manga?start_date=${animeStartDate}&order_by=title&sort=desc&page=${pageNumber}&${
+      filterParams ? filterParams : ''
+    }`
+  );
   const json = await response.json();
   return json;
 }
 
 export async function getOldestMangaInfo(pageNumber = 1, filterParams) {
-  const response = await fetch(`${baseUrl}/manga?start_date=${animeStartDate}&end_date=${animeEndDate}&order_by=start_date&page=${pageNumber}&${filterParams ? filterParams : ''}`);
+  const response = await fetch(
+    `${baseUrl}/manga?start_date=${animeStartDate}&end_date=${animeEndDate}&order_by=start_date&page=${pageNumber}&${
+      filterParams ? filterParams : ''
+    }`
+  );
   const json = await response.json();
   return json;
 }
 export async function getNewestMangaInfo(pageNumber = 1, filterParams) {
-  const response = await fetch(`${baseUrl}/manga?start_date=${animeStartDate}&end_date=${animeEndDate}&order_by=start_date&sort=desc&page=${pageNumber}&${filterParams ? filterParams : ''}`);
+  const response = await fetch(
+    `${baseUrl}/manga?start_date=${animeStartDate}&end_date=${animeEndDate}&order_by=start_date&sort=desc&page=${pageNumber}&${
+      filterParams ? filterParams : ''
+    }`
+  );
   const json = await response.json();
   return json;
 }

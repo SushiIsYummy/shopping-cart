@@ -3,16 +3,13 @@ import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 import { 
-  Outlet,
   NavLink,
-  useNavigate,
   useNavigation,
   useSearchParams,
 } from "react-router-dom";
 import Searchbar from '../Searchbar/Searchbar';
 import { useMediaQuery } from '@react-hook/media-query';
 import { getTotalItemsInCart } from '../../cartItemsLocalStorage';
-import MiniCart from '../../pages/MiniCart/MiniCart';
 import { useMiniCart } from '../../pages/MiniCart/MiniCartContext';
 import LoadingOverlay from '../LoadingOverlay/LoadingOverlay';
 
@@ -37,15 +34,15 @@ function Header() {
     };
   }, []);
 
-  useEffect(() => {
-    if (navigation.state === 'loading') {
-      setSearchInput('');
-    }
-  }, [navigation.state])
+  // useEffect(() => {
+  //   if (navigation.state === 'loading') {
+  //     setSearchInput('');
+  //   }
+  // }, [navigation.state])
 
   return (
     <>
-      <header className={styles.header}>
+      <header  className={styles.header}>
         <nav className={styles.headerNav}>
           <NavLink to={'/'}>
             <h1 className={styles.storeName}>AnimeStore</h1>
@@ -78,10 +75,7 @@ function Header() {
           />
         )}
       </header>
-      <main>
-        {navigation.state === 'loading' && <LoadingOverlay />}
-        <Outlet />
-      </main>
+      {navigation.state === 'loading' && <LoadingOverlay />}
     </>
   )
 }

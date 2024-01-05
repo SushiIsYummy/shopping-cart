@@ -67,7 +67,11 @@ function MiniCart() {
             <i className='fa fa-2x fa-shopping-cart'></i>
             <h1>My Cart ({totalItems})</h1>
           </div>
-          <i className={`${styles.closeButton} fa fa-2x fa-close`} onClick={closeMiniCart}></i>
+          <i 
+            className={`${styles.closeButton} fa fa-2x fa-close`} 
+            onClick={closeMiniCart}
+            data-testid='miniCartCloseButton'
+          />
         </header>
         {totalItems > 0  ? (
           <div className={styles.miniCart}>
@@ -88,7 +92,7 @@ function MiniCart() {
                 <p>Shipping & taxes are calculated at checkout</p>
               </h1>
               <NavLink to={'/cart'} onClick={handleNavLinkClick}>
-                <button className={styles.viewCartButton}>VIEW CART</button>
+                <button className={styles.viewCartButton} data-testid='viewCartButton'>VIEW CART</button>
               </NavLink>
               {/* <NavLink> */}
               <button className={styles.checkoutButton}>CHECKOUT</button>

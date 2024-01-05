@@ -56,7 +56,7 @@ export function AddToCartModals({
   }
 
   return (
-    <div className={styles.modalArea} ref={modalArea} onClick={closeMiniCart}>
+    <div className={styles.modalArea} ref={modalArea} onClick={closeMiniCart} data-testid='modalArea'>
       {modals.map((modal) => 
         <AddToCartModal 
           key={modal.id} 

@@ -31,7 +31,7 @@ function Cart() {
     <>
       {totalItems > 0 &&
       <div className={styles.cart}>
-        <div className={styles.cartItems}>
+        <div className={styles.cartItems} data-testid='cartItems'>
           <header>
             <h1>My Cart ({totalItems})</h1>
           </header>

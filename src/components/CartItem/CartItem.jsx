@@ -24,14 +24,14 @@ function CartItem({
   }
 
   return (
-    <div className={styles.cartItem} data-id={`${productType}-${productId}`}>
+    <div className={styles.cartItem} data-id={`${productType}-${productId}`} data-testid='cartItem'>
       <div className={styles.topPart}>
         <NavLink to={`/products/${productType}/${productId}`} onClick={handleNavLinkClick}>
           <img src={productImage} alt="" />
         </NavLink>
         <div className={styles.titleAndPrice}>
           <NavLink to={`/products/${productType}/${productId}`} onClick={handleNavLinkClick}>
-            <p className={styles.productTitle}>{productTitle}</p>
+            <p className={styles.productTitle} data-testid='productTitle'>{productTitle}</p>
           </NavLink>
           <p className={styles.totalPrice}>${totalPrice}</p>
         </div>

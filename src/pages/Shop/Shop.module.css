@@ -74,8 +74,8 @@
 }
 
 .itemInfoContainer {
-  display: flex;
-  justify-content: center;
+  /* display: flex; */
+  /* justify-content: center; */
 }
 
 .itemInfo {
@@ -179,7 +179,7 @@ button.addToCart {
   }
 
   .backContainer {
-    flex: 3;
+    flex: 2;
     margin-bottom: 0;
     display: flex;
     align-items: center;
@@ -214,5 +214,10 @@ button.addToCart {
 @media screen and (min-width: 1200px) {
   .items {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}
+@media screen and (min-width: 1200px) {
+  .backContainer {
+    flex: 3;
   }
 }

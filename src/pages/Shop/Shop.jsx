@@ -1,6 +1,7 @@
 import { 
   useEffect, 
   useState, 
+  useRef,
 } from 'react'
 import { useMediaQuery } from '@react-hook/media-query';
 import styles from './Shop.module.css';
@@ -18,21 +19,20 @@ import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import { addToCart } from '../../cartItemsLocalStorage';
 import { AddToCartModals } from '../../components/AddToCartModal/AddToCartModal';
 import { useMiniCart } from '../MiniCart/MiniCartContext';
-// export async function loader() {
-//   const popularAnime = await getPopularAnimeInfo();
-//   console.log(popularAnime);
-//   return { popularAnime };
-// }
+import ErrorPage from '../Error/ErrorPage';
 
 function Shop() {
-  // const { popularAnime } = useLoaderData();
   const [modals, setModals] = useState([]);
   const [productsData, setProductsData] = useState(null);
   const [genresData, setGenresData] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [isLoadingProductsData, setIsLoadingProductsData] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [error, setError] = useState(false);
+  const [documentHeightGreaterThan100vh, setDocumentHeightGreaterThan100vh] = useState(true);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
+  let backToTopRef = useRef();
+  let backToTopCloneRef = useRef();
   const navigate = useNavigate();
   let hasProducts = productsData?.data?.length > 0;
 
@@ -76,82 +76,183 @@ function Shop() {
 
   useEffect(() => {
     async function fetchGenresData() {
-      let genresData = null;
-      if (productTypeParam && productTypeParam === 'anime') {
-        genresData = await getAnimeGenres();
-        // console.log('got anime genres')
-      } else if (productTypeParam && productTypeParam === 'manga') {
-        genresData = await getMangaGenres();
-        // console.log('got manga genres')
+      try {
+        let refetch = false;
+        let genresData = null;
+        do {
+          if (refetch) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+          if (productTypeParam && productTypeParam === 'anime') {
+            genresData = await getAnimeGenres();
+            // console.log('got anime genres');
+          } else if (productTypeParam && productTypeParam === 'manga') {
+            genresData = await getMangaGenres();
+            // console.log('got manga genres');
+          }
+          refetch = true;
+          // fetch data again if there is a 429 error
+        } while (genresData && genresData?.status === '429');
+        // console.log(genresData);
+        setGenresData(genresData);
+      } catch (error) {
+        console.log(error);
+        throw new Response("", {
+          status: 429,
+          statusText: "RateLimitException",
+        });
       }
-      setGenresData(genresData);
-    }
+    } 
 
     // console.log('ENTERING FETCH GENRES');
     // console.log(`productType param: ${productTypeParam}`);
     
     if (productTypeParam) {
-      // add timeout in development to prevent 429 too many requests
-      // in react strictmode, the app calls api 4 times total on page refresh
-      // api has a rate limit of 3 requests per second
-      // setTimeout(() => {
-        fetchGenresData();
-      // }, 1000);
+      fetchGenresData();
     }
     
     // console.log('LEAVING FETCH GENRES');
 
   }, [productTypeParam]);
-
+  
   useEffect(() => {
     async function fetchProductsData() {
       let updatedData = null; 
-      // console.log(`filter params: ${filterParams}`);
-      if (productTypeParam === 'anime') {
-        if (sortByParam === 'popularity') {
-          updatedData = await getPopularAnimeInfo(pageParam, filterParams);
-        } else if (sortByParam === 'AZ') {
-          updatedData = await getSortedAZAnimeInfo(pageParam, filterParams);
-        } else if (sortByParam === 'ZA') {
-          updatedData = await getSortedZAAnimeInfo(pageParam, filterParams);
-        } else if (sortByParam === 'newest') {
-          updatedData = await getNewestAnimeInfo(pageParam, filterParams)
-        } else if (sortByParam === 'oldest') {
-          updatedData = await getOldestAnimeInfo(pageParam, filterParams);
-        }
-        // console.log('got anime info!');
-      } else if (productTypeParam === 'manga') {
-        if (sortByParam === 'popularity') {
-          updatedData = await getPopularMangaInfo(pageParam, filterParams);
-        } else if (sortByParam === 'AZ') {
-          updatedData = await getSortedAZMangaInfo(pageParam, filterParams);
-        } else if (sortByParam === 'ZA') {
-          updatedData = await getSortedZAMangaInfo(pageParam, filterParams);
-        } else if (sortByParam === 'newest') {
-          updatedData = await getNewestMangaInfo(pageParam, filterParams)
-        } else if (sortByParam === 'oldest') {
-          updatedData = await getOldestMangaInfo(pageParam, filterParams);
-        }
-        // console.log('got manga info!');
+      let refetch = false;
+      try {
+        do {
+          if (refetch) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+          // console.log(`filter param: ${filterParams}`)
+          if (productTypeParam === 'anime') {
+            if (sortByParam === 'popularity') {
+              updatedData = await getPopularAnimeInfo(pageParam, filterParams);
+            } else if (sortByParam === 'AZ') {
+              updatedData = await getSortedAZAnimeInfo(pageParam, filterParams);
+            } else if (sortByParam === 'ZA') {
+              updatedData = await getSortedZAAnimeInfo(pageParam, filterParams);
+            } else if (sortByParam === 'newest') {
+              updatedData = await getNewestAnimeInfo(pageParam, filterParams)
+            } else if (sortByParam === 'oldest') {
+              updatedData = await getOldestAnimeInfo(pageParam, filterParams);
+            }
+            // console.log('got anime info!');
+          } else if (productTypeParam === 'manga') {
+            if (sortByParam === 'popularity') {
+              updatedData = await getPopularMangaInfo(pageParam, filterParams);
+            } else if (sortByParam === 'AZ') {
+              updatedData = await getSortedAZMangaInfo(pageParam, filterParams);
+            } else if (sortByParam === 'ZA') {
+              updatedData = await getSortedZAMangaInfo(pageParam, filterParams);
+            } else if (sortByParam === 'newest') {
+              updatedData = await getNewestMangaInfo(pageParam, filterParams)
+            } else if (sortByParam === 'oldest') {
+              updatedData = await getOldestMangaInfo(pageParam, filterParams);
+            }
+            // console.log('got manga info!');
+          }
+          refetch = true;
+          // fetch data again if there is a 429 error
+        } while (updatedData && updatedData?.status === '429');
+
+        setProductsData(updatedData);
+        setIsLoadingProductsData(false);
+      } catch (error) {
+        setError(true);
       }
-      setProductsData(updatedData);
-      setIsLoadingProductsData(false);
     }
     // console.log('ENTERING FETCH PRODUCTS');
 
+    if (!genresData) {
+      return;
+    }
+    
     if (pageParam && sortByParam && productTypeParam && !isLoadingProductsData) {
-      // add timeout in development to prevent 429 too many requests
-      // in react strictmode, the app calls api 4 times total on page refresh
-      // api has a rate limit of 3 requests per second
       setIsLoadingProductsData(true);
-      setTimeout(() => {
-        fetchProductsData();
-      }, 2000);
+      // setTimeout(() => {
+      fetchProductsData();
+      // }, 2000);
     }
     // console.log('LEAVING FETCH PRODUCTS');
 
-  }, [searchParams, productTypeParam, pageParam, filterParams, sortByParam]);
+  }, [searchParams, productTypeParam, pageParam, filterParams, sortByParam, genresData]);
 
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      // console.log('HANDLED RESIZE');
+      const viewportHeight = window.innerHeight;
+      const documentHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.body.clientHeight,
+        document.documentElement.clientHeight
+      );
+      
+      if (backToTopCloneRef.current) {
+        // console.log(backToTopCloneRef.current);
+        // console.log(getHeightOfElement(backToTopCloneRef.current));
+        const backToTopStyles = getComputedStyle(backToTopCloneRef.current);
+        const elementHeight = backToTopCloneRef.current?.clientHeight || 0;
+        const elementMarginTop = backToTopStyles.marginTop;
+        // console.log(`element height: ${elementHeight}`);
+        // console.log(`element margin: ${backToTopStyles.marginTop}`);
+        // console.log(documentHeightGreaterThan100vh);
+        // console.log(documentHeight);
+        // console.log(viewportHeight)
+        setDocumentHeightGreaterThan100vh(documentHeight > viewportHeight);
+      }
+    });
+
+    const handleResize = () => {
+      // console.log('HANDLED RESIZE');
+      const viewportHeight = window.innerHeight;
+      const documentHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.body.clientHeight,
+        document.documentElement.clientHeight
+      );
+      
+      if (backToTopCloneRef.current) {
+        // console.log(backToTopCloneRef.current);
+        // console.log(getHeightOfElement(backToTopCloneRef.current));
+        const backToTopStyles = getComputedStyle(backToTopCloneRef.current);
+        const elementHeight = backToTopCloneRef.current?.clientHeight || 0;
+        const elementMarginTop = backToTopStyles.marginTop;
+        // console.log(`element height: ${elementHeight}`);
+        // console.log(`element margin: ${backToTopStyles.marginTop}`);
+        // console.log(documentHeightGreaterThan100vh);
+        // console.log(documentHeight);
+        // console.log(viewportHeight)
+        setDocumentHeightGreaterThan100vh(documentHeight > viewportHeight);
+      }
+    };
+    resizeObserver.observe(document.documentElement);
+    // console.log('exists')
+    // Initial check
+    // handleResize();
+
+    // const observer = new MutationObserver(handleResize);
+
+    // Observe changes in the entire document
+    // observer.observe(document, { subtree: true, childList: true });
+
+    // Listen for resize events
+    
+    // window.addEventListener('resize', () => console.log('resized'));
+    
+    // Cleanup the event listener on component unmount
+    return () => {
+      // window.removeEventListener('resize', () => console.log('resized'));
+      // observer.disconnect();
+    };
+  }, []);
+  
   function getFilterParams() {
     let genreIds = [];
     if (genresParam && genresData) {
@@ -197,6 +298,10 @@ function Shop() {
       }])
   }
 
+  if (error) {
+    return <ErrorPage />;
+  }
+  
   return (
     <>
       {isLoadingProductsData && <LoadingOverlay />}
@@ -263,9 +368,14 @@ function Shop() {
           <Filter 
             genresData={genresData ? genresData.data : []} 
           />}
-          <div className={styles.items}>
+          <div className={styles.items} data-testid='items'>
             {productsData && productsData?.data?.map((product, index) => {
-              const ratingOutOfFive = Number(+(Math.round(Math.floor(product.score/2 * 100) / 100 + "e+2")  + "e-2")).toFixed(2);
+              let ratingOutOfFive;
+              if (Math.round(product.score*100) % 2 === 0) {
+                ratingOutOfFive = product.score / 2;
+              } else {
+                ratingOutOfFive = Number(+(Math.round(Math.floor(product.score/2 * 100) / 100 + "e+2")  + "e-2")).toFixed(2);
+              }
               return (
                 // sometimes the api response has 2+ items with the same 'mal_id'
                 <ShopItem 
@@ -289,11 +399,38 @@ function Shop() {
             isLoading = {isLoadingProductsData}
           />}
       </div>
-      {hasProducts && 
-        <div className={styles.backToTop} onClick={() => window.scrollTo({ top: 0})}>Back to top</div>
+      {hasProducts && documentHeightGreaterThan100vh &&
+        <div ref={backToTopRef} className={styles.backToTop} onClick={() => window.scrollTo({ top: 0})}>Back to top</div>
       }
+      <div ref={backToTopCloneRef} style={{ position: 'fixed', visibility: 'hidden' }} className={styles.backToTop} onClick={() => window.scrollTo({ top: 0})}>Back to top</div>
     </>
   )
+}
+
+function getHeightOfElement(element) {
+  // Create a detached DOM node
+  const tempNode = document.createElement('div');
+
+  // Apply styles to the detached node (optional)
+  tempNode.style.position = 'absolute';
+  tempNode.style.visibility = 'hidden';
+
+  // Clone the target element (to avoid modifying the original)
+  const clonedElement = element.cloneNode(true);
+
+  // Append the cloned element to the detached node
+  tempNode.appendChild(clonedElement);
+
+  // Append the detached node to the body (to make it part of the DOM)
+  document.body.appendChild(tempNode);
+
+  // Get the height of the cloned element
+  const height = clonedElement.clientHeight;
+
+  // Remove the detached node from the DOM
+  document.body.removeChild(tempNode);
+
+  return height;
 }
 
 function ShopItem({
@@ -330,7 +467,7 @@ function ShopItem({
 
   return (
     <div className={styles.itemInfoContainer}>
-      <div className={styles.itemInfo}>
+      <div className={styles.itemInfo} data-testid='itemInfo'>
         <NavLink to={`/products/${productType}/${productId}`}>
           <img src={productImage} alt="" />
         </NavLink>
@@ -355,6 +492,7 @@ function ShopItem({
         <button 
           className={styles.addToCart}
           onClick={handleAddToCartClick}
+          data-testid='addToCartButton'
         >
           ADD TO CART
         </button>
@@ -362,4 +500,5 @@ function ShopItem({
     </div>
   )
 }
+
 export default Shop;

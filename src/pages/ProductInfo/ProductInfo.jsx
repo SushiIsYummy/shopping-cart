@@ -1,8 +1,6 @@
 import './ProductInfo.css';
 import { useState } from 'react';
 import { 
-  Form,
-  NavLink,
   useLoaderData,
   useNavigate
 } from "react-router-dom";
@@ -11,28 +9,31 @@ import formatPublishDates from '../../utils/formatPublishDates';
 import StarRating from '../../components/StarRating/StarRating';
 import generateFakePrice from '../../utils/generateFakePrice';
 import { addToCart } from '../../cartItemsLocalStorage';
-import AddToCartModal from '../../components/AddToCartModal/AddToCartModal';
 import { useMiniCart } from '../MiniCart/MiniCartContext';
-import { useEffect, useRef } from 'react';
 import { AddToCartModals } from '../../components/AddToCartModal/AddToCartModal';
-import { MiniCartProvider } from '../MiniCart/MiniCartContext';
 
 export async function loader({ params }) {
   const productType = params.productType;
-  // console.log(productType)
-  let productInfo;
-  if (productType === 'anime') {
-    productInfo = await getAnimeInfo(params.productId);
-  } else if (productType === 'manga') {
-    productInfo = await getMangaInfo(params.productId);
-  }
-  if (!productInfo) {
+  let productInfo = null;
+  try {
+    let refetch = false;
+    do{
+      if (productType === 'anime') {
+        productInfo = await getAnimeInfo(params.productId);
+      } else if (productType === 'manga') {
+        productInfo = await getMangaInfo(params.productId);
+      }
+      refetch = true;
+    } while (productInfo && productInfo.status === '429');
+
+    return { productInfo, productType };
+  } catch (error) {
+    console.log(error);
     throw new Response("", {
-      status: 404,
-      statusText: "Not Found",
+      status: 429,
+      statusText: "RateLimitException",
     });
   }
-  return { productInfo, productType };
 }
 
 function ProductInfo() {
@@ -41,9 +42,7 @@ function ProductInfo() {
   const { cartIsOpen, openMiniCart, closeMiniCart, miniCartItems, scrollToMiniCartItem } = useMiniCart();
   const { productInfo, productType } = useLoaderData();
   const navigate = useNavigate();
-
-  // console.log(modals)
-  // console.log(productInfo);
+  console.log(productInfo)
   const originalRating = productInfo.data.score;
   const ratingOutOfFive = Number(+(Math.round(Math.floor(originalRating/2 * 100) / 100 + "e+2")  + "e-2")).toFixed(2);
   const publishedDate = productType === 'manga' ? formatPublishDates(productInfo.data.published.from, productInfo.data.published.to) : null;
@@ -67,7 +66,6 @@ function ProductInfo() {
   }
 
   function handleQuantityChange(e) {
-    console.log(typeof e.target.value);
     setQuantity(Number(e.target.value));
   }
 
