@@ -22,7 +22,7 @@ function Header() {
   const { cartIsOpen, openMiniCart, closeMiniCart } = useMiniCart();
   const navigation = useNavigation();
   const defaultShopSearchParams = 'page=1&sortBy=popularity&productType=anime';
-  // console.log(window.history)
+  
   useEffect(() => {
     const handleCartItemsChange = () => {
       setTotalItems(getTotalItemsInCart());

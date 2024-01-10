@@ -12,59 +12,23 @@ import {
   getSortedZAAnimeInfo,
   getSortedZAMangaInfo,
 } from '../../api';
-import addUrlParam from '../../utils/addUrlParam';
 
 // the loader function gets called when setSearchParams is called, so I
 // set a useLoader item in session storage to indicate what to fetch
 export async function loader({ request }) {
-  console.log('LOADER CALLED!!!!');
   const requestUrl = new URL(request.url);
-  console.log(requestUrl.searchParams.toString());
-  // let genresParam = requestUrl.searchParams.get('genres');
   let loaderGenresData = null;
 
-  let loaderShowFilters1;
-  let loaderShowFilters2;
-
-  let showFilters1Param = requestUrl.searchParams.get('showFilters1');
-  let showFilters2Param = requestUrl.searchParams.get('showFilters2');
-  console.log(showFilters1Param);
-  console.log(showFilters2Param);
+  let loaderShowFiltersLargeScreen;
+  let showFiltersLSParam = requestUrl.searchParams.get('showFiltersLS');
   if (
-    showFilters1Param &&
-    (showFilters1Param === 'true' || showFilters1Param === 'false')
+    showFiltersLSParam &&
+    (showFiltersLSParam === 'true' || showFiltersLSParam === 'false')
   ) {
-    loaderShowFilters1 = showFilters1Param === 'true';
+    loaderShowFiltersLargeScreen = showFiltersLSParam === 'true';
   } else {
-    // addUrlParam('showFilters1', 'false');
-    console.log(requestUrl.toString());
-    loaderShowFilters1 = false;
+    loaderShowFiltersLargeScreen = true;
   }
-  if (
-    showFilters2Param &&
-    (showFilters2Param === 'true' || showFilters2Param === 'false')
-  ) {
-    loaderShowFilters2 = showFilters2Param === 'true';
-    console.log(showFilters2Param);
-    console.log(loaderShowFilters2);
-  } else {
-    // addUrlParam('showFilters2', 'true');
-    console.log(requestUrl.toString());
-    loaderShowFilters2 = true;
-  }
-
-  // let loaderShowFilters2 = true;
-  // if (sessionStorage.getItem('prevShowFilters2')) {
-  //   loaderShowFilters2 = Boolean(sessionStorage.getItem('prevShowFilters2'));
-  // } else if (window.history.state.showFilters2 === undefined) {
-  //   loaderShowFilters2 = true;
-  // } else {
-  //   loaderShowFilters2 = window.history.state.showFilters2;
-  // }
-  // console.log(loaderShowFilters1);
-  // console.log(loaderShowFilters2);
-  // sessionStorage.removeItem('prevShowFilters1');
-  // sessionStorage.removeItem('prevShowFilters2');
 
   let productTypeParam = requestUrl.searchParams.get('productType') || 'anime';
   let genresParam = requestUrl.searchParams.get('genres');
@@ -92,7 +56,6 @@ export async function loader({ request }) {
     loaderGenresData = JSON.parse(sessionStorage.getItem('genres'));
   }
   if (useLoaderArray.includes('products')) {
-    // console.log(loaderGenresData);
     loaderProductsData = await fetchProductsData(
       genresParam,
       loaderGenresData,
@@ -106,16 +69,11 @@ export async function loader({ request }) {
   }
 
   sessionStorage.removeItem('useLoader');
-  // console.log(window.location.search);
-  // console.log(loaderGenresData);
-  // console.log(loaderProductsData);
-  console.log(loaderShowFilters1);
-  console.log(loaderShowFilters2);
+
   return {
     loaderGenresData,
     loaderProductsData,
-    loaderShowFilters1,
-    loaderShowFilters2,
+    loaderShowFiltersLargeScreen,
   };
 }
 
@@ -129,16 +87,14 @@ async function fetchGenresData(productType) {
       }
       if (productType === 'anime') {
         genresData = await getAnimeGenres();
-        console.log('got anime genres');
       } else if (productType === 'manga') {
         genresData = await getMangaGenres();
-        console.log('got manga genres');
       }
       refetch = true;
     } while (genresData && genresData.status === '429');
     return genresData;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new Response('', {
       status: 429,
       statusText: 'RateLimitException',
@@ -163,8 +119,8 @@ async function fetchProductsData(
     minScoreParam,
     maxScoreParam
   );
-  console.log(`filter params: ${filterParams}`);
   let productsData = null;
+
   try {
     let refetch = false;
     do {
@@ -183,7 +139,6 @@ async function fetchProductsData(
         } else if (sortByParam === 'oldest') {
           productsData = await getOldestAnimeInfo(pageParam, filterParams);
         }
-        console.log('got anime info!');
       } else if (productTypeParam === 'manga') {
         if (sortByParam === 'popularity') {
           productsData = await getPopularMangaInfo(pageParam, filterParams);
@@ -196,13 +151,12 @@ async function fetchProductsData(
         } else if (sortByParam === 'oldest') {
           productsData = await getOldestMangaInfo(pageParam, filterParams);
         }
-        console.log('got manga info!');
       }
       refetch = true;
     } while (productsData && productsData.status === '429');
     return productsData;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new Response('', {
       status: 429,
       statusText: 'RateLimitException',
@@ -217,7 +171,6 @@ function getFilterParams(
   minScoreParam,
   maxScoreParam
 ) {
-  // console.log(genresData);
   let genreIds = [];
   if (genresParam && genresData) {
     genresData.data.forEach((genre) => {

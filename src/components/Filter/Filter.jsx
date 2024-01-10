@@ -106,7 +106,7 @@ function Filter({
     <Form className={styles.filterContainer} onSubmit={handleSubmit}>
       <div className={styles.filterOption}>
         <div className={styles.categoryHeader} onClick={() => handleCategoryClick('products')}>
-          <div className={styles.category}>Products ({capitalize(productTypeParam)})</div>
+          <div className={styles.category}>Product Type ({capitalize(productTypeParam)})</div>
           <div className={styles.plusMinus}>{openCategories['products'] ? '-' : '+'}</div>
         </div>
         <div className={`${styles.options} ${(openCategories['products'] !== null && !openCategories['products'] && `${styles.hide}`) || ''}`}>

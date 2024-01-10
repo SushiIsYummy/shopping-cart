@@ -8,58 +8,46 @@ import {
   NavLink,
   useSearchParams,
   useNavigate,
-  useNavigation,
-  useLocation,
   useLoaderData,
 } from 'react-router-dom';
 import generateFakePrice from '../../utils/generateFakePrice';
 import StarRating from '../../components/StarRating/StarRating';
 import Pagination from '../../components/Pagination/Pagination';
 import Filter from '../../components/Filter/Filter';
-import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import { addToCart } from '../../cartItemsLocalStorage';
 import { AddToCartModals } from '../../components/AddToCartModal/AddToCartModal';
 import { useMiniCart } from '../MiniCart/MiniCartContext';
 import addUrlParam from '../../utils/addUrlParam';
+import SlideInModal from '../../components/SlideInModal/SlideInModal';
 
 function Shop() {
-  const { loaderGenresData, loaderProductsData, loaderShowFilters1, loaderShowFilters2 } = useLoaderData();
+  const { loaderGenresData, loaderProductsData, loaderShowFiltersLargeScreen } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
   const [modals, setModals] = useState([]);
   const [productsData, setProductsData] = useState(loaderProductsData);
   const [genresData, setGenresData] = useState(loaderGenresData);
-  // const [showFilters1, setShowFilters1] = useState(loaderShowFilters1);
-  const [showFilters1, setShowFilters1] = useState(false);
-  const [showFilters2, setShowFilters2] = useState(loaderShowFilters2);
+  const [showFiltersSmallScreen, setShowFiltersSmallScreen] = useState(false);
+  const [showFiltersLargeScreen, setShowFiltersLargeScreen] = useState(loaderShowFiltersLargeScreen);
   const [documentHeightGreaterThan100vh, setDocumentHeightGreaterThan100vh] = useState(true);
   const [rerender, setRerender] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
-  const navigation = useNavigation();
   const navigate = useNavigate();
-  const location = useLocation();
   const isLoading = navigate.state === 'loading';
 
   let hasProducts = productsData?.data?.length > 0;
-  let urlParam = new URLSearchParams(window.location.search);
 
+  let urlParam = new URLSearchParams(window.location.search);
   let productTypeParam = urlParam.get('productType');
   let searchInputParam = urlParam.get('search');
   let sortByParam = urlParam.get('sortBy');
   let pageParam = urlParam.get('page');
-  // console.log(pageParam);
-  // console.log(sortByParam);
-  // console.log(productTypeParam);
-  // let genresParam = searchParams.get('genres');
-  // let minScoreParam = searchParams.get('minScore');
-  // let maxScoreParam = searchParams.get('maxScore');
-  // let filterParams = getFilterParams();
 
   const totalPages = productsData?.pagination?.last_visible_page ?? 0;
   const totalItems = productsData?.pagination?.items?.total ?? 0;
   const itemsPerPage = productsData?.pagination?.items?.per_page ?? 0;
   const paginationStartIndex = (pageParam - 1) * itemsPerPage + 1;
   const paginationEndIndex = Math.min(pageParam * itemsPerPage, totalItems);
-  console.log('shop RENDERED!');
+
   useEffect(() => {
     let changed = false;
     if (!pageParam) {
@@ -74,14 +62,9 @@ function Shop() {
       addUrlParam('productType', 'anime');
       changed = true;
     }
-    // addUrlParam('showFilters1', 'false');
-    // addUrlParam('showFilters2', 'true');
     if (changed) {
       setRerender(!rerender);
     }
-    // console.log(pageParam);
-    // console.log(sortByParam);
-    // console.log(productTypeParam);
   }, [pageParam, productTypeParam, rerender, searchParams, sortByParam])
 
   useEffect(() => {
@@ -95,27 +78,11 @@ function Shop() {
       setGenresData(loaderGenresData);
     }
   }, [loaderGenresData])
-
-  useEffect(() => {
-    // setShowFilters1(loaderShowFilters1);
-    addUrlParam('showFilters1', loaderShowFilters1);
-    console.log('show filters1 changed');
-  }, [loaderShowFilters1]);
   
   useEffect(() => {
-    setShowFilters2(loaderShowFilters2);
-    addUrlParam('showFilters2', loaderShowFilters2);
-    console.log('show filters2 changed');
-  }, [loaderShowFilters2]);
-
-  useEffect(() => {
-    
-    console.log('shop component mounted');
-    return () => {
-      console.log('shop component unmounted');
-      sessionStorage.removeItem('useLoader', 'false');
-    }
-  }, [])
+    setShowFiltersLargeScreen(loaderShowFiltersLargeScreen);
+    addUrlParam('showFiltersLS', loaderShowFiltersLargeScreen);
+  }, [loaderShowFiltersLargeScreen]);
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
@@ -155,6 +122,10 @@ function Shop() {
         id: modalId,
       }])
   }
+  
+  function closeSmallScreenFiltersModal() {
+    setShowFiltersSmallScreen(false);
+  }
 
   return (
     <>
@@ -183,22 +154,21 @@ function Shop() {
                 type='button' 
                 className={styles.filter} 
                 onClick={() => {
-                  addUrlParam('showFilters1', !showFilters1);
-                  setShowFilters1(!showFilters1);
+                  setShowFiltersSmallScreen(!showFiltersSmallScreen);
                 }}
               >
-                {`${showFilters1 ? 'Hide' : 'Show'} Filters`}
+                {`${showFiltersSmallScreen ? 'Hide' : 'Show'} Filters`}
               </button>}
               {!isSmallScreen && 
               <button 
               type='button' 
               className={styles.filter} 
               onClick={() => {
-                addUrlParam('showFilters2', !showFilters2);
-                setShowFilters2(!showFilters2);
+                addUrlParam('showFiltersLS', !showFiltersLargeScreen);
+                setShowFiltersLargeScreen(!showFiltersLargeScreen);
                 }}
               >
-                {`${showFilters2 ? 'Hide' : 'Show'} Filters`}
+                {`${showFiltersLargeScreen ? 'Hide' : 'Show'} Filters`}
               </button>}
               <div className={styles.sortByContainer}>
                 <p>Sort by &nbsp;</p>
@@ -223,21 +193,30 @@ function Shop() {
               </div>
             </div>
           </div>
-          {showFilters1 && isSmallScreen &&
-          <Filter 
-            genresData={genresData ? genresData.data : []} 
-          />}
+          {isSmallScreen &&
+          <SlideInModal isOpen={showFiltersSmallScreen} onClose={closeSmallScreenFiltersModal}>
+            <div className={styles.paginationInfoInFilter}>
+              <div>
+                {productsData && !isLoading && !searchInputParam && <p>Displaying results for all {productTypeParam}</p>}
+                {productsData && !isLoading && searchInputParam && <p>Displaying results for "{searchInputParam}" for all {productTypeParam}</p>}
+                {productsData && !isLoading && hasProducts && `Showing ${paginationStartIndex}-${paginationEndIndex} of ${totalItems} Total Products`}
+                {productsData && !isLoading && !(hasProducts) &&  `No Products Found.`}
+              </div>
+              <div className='fa fa-2x fa-close' onClick={closeSmallScreenFiltersModal}></div>
+            </div>
+            <Filter 
+              genresData={genresData ? genresData.data : []} 
+            />
+          </SlideInModal>}
         </div>
         <div className={styles.paginationInfo}>
           {productsData && !isLoading && !searchInputParam && <p>Displaying results for all {productTypeParam}</p>}
           {productsData && !isLoading && searchInputParam && <p>Displaying results for "{searchInputParam}" for all {productTypeParam}</p>}
           {productsData && !isLoading && hasProducts && `Showing ${paginationStartIndex}-${paginationEndIndex} of ${totalItems} Total Products`}
           {productsData && !isLoading && !(hasProducts) &&  `No Products Found.`}
-          {/* {isLoading && 'Loading Products...'} */}
-          {/* {isLoading && <LoadingOverlay />} */}
         </div>
         <div className={styles.filterAndItems}>
-          {showFilters2 && !isSmallScreen &&
+          {showFiltersLargeScreen && !isSmallScreen &&
           <Filter 
             genresData={genresData ? genresData.data : []} 
           />}

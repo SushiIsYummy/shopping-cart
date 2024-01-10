@@ -59,6 +59,13 @@
   padding: 10px 0;
 }
 
+.paginationInfoInFilter {
+  display: flex;
+  justify-content: space-between;
+  gap: 3px;
+  padding: 10px 10px 0 10px;
+}
+
 .filterAndItems {
   display: flex;
   gap: 10px;

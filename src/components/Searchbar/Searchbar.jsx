@@ -34,18 +34,17 @@ function Searchbar({
     if (location.pathname !== '/shop') {
       navigate(`/shop?page=1&sortBy=popularity&${updatedSearchParams}`);
     } else {
-      setSearchParams((searchParams) => {
-      // console.log(searchParams.toString());
-        return { 
-          ...Object.fromEntries(searchParams),
-          search: searchbar.current.value,
-          productType: selectedProduct,
-          // make it so that even when searching with the same exact inputs,
-          // it will still fetch products data.
-          searchId: crypto.randomUUID(),
-        };
+      setSearchParams({
+        page: 1,
+        sortBy: 'popularity',
+        search: searchbar.current.value,
+        productType: selectedProduct,
+        // make it so that even when searching with the same exact inputs,
+        // it will still fetch products data.
+        // searchId: crypto.randomUUID(),
       })
     }
+    setSearchInput('');
   }
 
   return (

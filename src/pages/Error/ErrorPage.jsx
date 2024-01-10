@@ -3,7 +3,7 @@ import styles from './ErrorPage.module.css';
 
 export default function ErrorPage() {
   const error = useRouteError();
-  console.log(error);
+  console.error(error);
   return (
     <div id="error-page" className={styles.errorPage}>
       <h1>Oops!</h1>

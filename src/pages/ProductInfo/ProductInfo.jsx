@@ -31,7 +31,7 @@ export async function loader({ params }) {
 
     return { productInfo, productType };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new Response("", {
       status: 429,
       statusText: "RateLimitException",
