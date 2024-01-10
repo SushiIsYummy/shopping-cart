@@ -21,7 +21,8 @@ function Header() {
   const outsideNav = useMediaQuery('(max-width: 768px)');
   const { cartIsOpen, openMiniCart, closeMiniCart } = useMiniCart();
   const navigation = useNavigation();
-
+  const defaultShopSearchParams = 'page=1&sortBy=popularity&productType=anime';
+  // console.log(window.history)
   useEffect(() => {
     const handleCartItemsChange = () => {
       setTotalItems(getTotalItemsInCart());
@@ -34,15 +35,9 @@ function Header() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (navigation.state === 'loading') {
-  //     setSearchInput('');
-  //   }
-  // }, [navigation.state])
-
   return (
     <>
-      <header  className={styles.header}>
+      <header className={styles.header}>
         <nav className={styles.headerNav}>
           <NavLink to={'/'}>
             <h1 className={styles.storeName}>AnimeStore</h1>
@@ -53,7 +48,10 @@ function Header() {
             <NavLink className={styles.logo} to={`/`}>
               Home
             </NavLink>
-            <NavLink to={`/shop`} onClick={() => setSearchInput('')}>
+            <NavLink to={`/shop?${defaultShopSearchParams}`} onClick={() => {
+              sessionStorage.setItem('useLoader', JSON.stringify(['genres', 'products']));
+              setSearchInput('')
+            }}>
               Shop
             </NavLink>
             <div className={styles.cartIconContainer} onClick={() => openMiniCart()}>

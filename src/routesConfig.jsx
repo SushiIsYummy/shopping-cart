@@ -1,5 +1,6 @@
 import {
   Outlet,
+  ScrollRestoration,
 } from "react-router-dom";
 import Home from './pages/Home/Home';
 import './index.css'
@@ -9,10 +10,12 @@ import Shop from './pages/Shop/Shop';
 import Cart from './pages/Cart/Cart';
 import MiniCart from './pages/MiniCart/MiniCart';
 import ProductInfo from './pages/ProductInfo/ProductInfo';
+import ScrollToTop from "./ScrollToTop";
 import { loader as HomeLoader } from './pages/Home/Home';
 import { loader as ProductInfoLoader } from './pages/ProductInfo/ProductInfo';
 import { MiniCartProvider } from './pages/MiniCart/MiniCartContext';
-// import { loader as ShopLoader } from './pages/Shop/Shop';
+import { loader as ShopLoader } from "./pages/Shop/ShopLoader";
+
 const routesConfig = [
   {
     path: "/",
@@ -21,6 +24,12 @@ const routesConfig = [
         <Header />
         <MiniCart />
         <Outlet />
+        <ScrollRestoration
+          getKey={(location, matches) => {
+            // default behavior
+            return location.key;
+          }}
+        />
       </MiniCartProvider>
     ),
     errorElement: <ErrorPage />,
@@ -36,7 +45,7 @@ const routesConfig = [
           {
             path: 'shop',
             element: <Shop />,
-              // loader: ShopLoader,
+            loader: ShopLoader,
             },
             {
               path: 'cart',
@@ -44,7 +53,13 @@ const routesConfig = [
             },
             {
               path: 'products/:productType/:productId',
-              element: <ProductInfo />,
+              element:  (
+                <>
+                  <ScrollToTop />
+                  <ProductInfo />,
+                </>
+              ),
+              
               loader: ProductInfoLoader,
             },
   

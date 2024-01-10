@@ -1,15 +1,16 @@
 import { 
   useEffect, 
   useState, 
-  useRef,
 } from 'react'
 import { useMediaQuery } from '@react-hook/media-query';
 import styles from './Shop.module.css';
-import { getAnimeGenres, getMangaGenres, getNewestAnimeInfo, getNewestMangaInfo, getOldestAnimeInfo, getOldestMangaInfo, getPopularAnimeInfo, getPopularMangaInfo, getSortedAZAnimeInfo, getSortedAZMangaInfo, getSortedZAAnimeInfo, getSortedZAMangaInfo } from '../../api';
 import { 
   NavLink,
   useSearchParams,
   useNavigate,
+  useNavigation,
+  useLocation,
+  useLoaderData,
 } from 'react-router-dom';
 import generateFakePrice from '../../utils/generateFakePrice';
 import StarRating from '../../components/StarRating/StarRating';
@@ -19,163 +20,102 @@ import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import { addToCart } from '../../cartItemsLocalStorage';
 import { AddToCartModals } from '../../components/AddToCartModal/AddToCartModal';
 import { useMiniCart } from '../MiniCart/MiniCartContext';
-import ErrorPage from '../Error/ErrorPage';
+import addUrlParam from '../../utils/addUrlParam';
 
 function Shop() {
-  const [modals, setModals] = useState([]);
-  const [productsData, setProductsData] = useState(null);
-  const [genresData, setGenresData] = useState(null);
-  const [showFilters, setShowFilters] = useState(false);
-  const [isLoadingProductsData, setIsLoadingProductsData] = useState(false);
+  const { loaderGenresData, loaderProductsData, loaderShowFilters1, loaderShowFilters2 } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [error, setError] = useState(false);
+  const [modals, setModals] = useState([]);
+  const [productsData, setProductsData] = useState(loaderProductsData);
+  const [genresData, setGenresData] = useState(loaderGenresData);
+  // const [showFilters1, setShowFilters1] = useState(loaderShowFilters1);
+  const [showFilters1, setShowFilters1] = useState(false);
+  const [showFilters2, setShowFilters2] = useState(loaderShowFilters2);
   const [documentHeightGreaterThan100vh, setDocumentHeightGreaterThan100vh] = useState(true);
+  const [rerender, setRerender] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
-  let backToTopRef = useRef();
+  const navigation = useNavigation();
   const navigate = useNavigate();
-  let hasProducts = productsData?.data?.length > 0;
+  const location = useLocation();
+  const isLoading = navigate.state === 'loading';
 
-  // url search params
-  let searchInputParam = searchParams.get('search');
-  let sortByParam = searchParams.get('sortBy');
-  let productTypeParam = searchParams.get('productType');
-  let pageParam = searchParams.get('page');
-  let genresParam = searchParams.get('genres');
-  let minScoreParam = searchParams.get('minScore');
-  let maxScoreParam = searchParams.get('maxScore');
-  let filterParams = getFilterParams();
+  let hasProducts = productsData?.data?.length > 0;
+  let urlParam = new URLSearchParams(window.location.search);
+
+  let productTypeParam = urlParam.get('productType');
+  let searchInputParam = urlParam.get('search');
+  let sortByParam = urlParam.get('sortBy');
+  let pageParam = urlParam.get('page');
+  // console.log(pageParam);
+  // console.log(sortByParam);
+  // console.log(productTypeParam);
+  // let genresParam = searchParams.get('genres');
+  // let minScoreParam = searchParams.get('minScore');
+  // let maxScoreParam = searchParams.get('maxScore');
+  // let filterParams = getFilterParams();
 
   const totalPages = productsData?.pagination?.last_visible_page ?? 0;
   const totalItems = productsData?.pagination?.items?.total ?? 0;
   const itemsPerPage = productsData?.pagination?.items?.per_page ?? 0;
   const paginationStartIndex = (pageParam - 1) * itemsPerPage + 1;
   const paginationEndIndex = Math.min(pageParam * itemsPerPage, totalItems);
-
+  console.log('shop RENDERED!');
   useEffect(() => {
-    const updatedSearchParams = new URLSearchParams(searchParams);
     let changed = false;
-  
     if (!pageParam) {
-      updatedSearchParams.set('page', '1');
-      changed = true; 
+      addUrlParam('page', '1');
+      changed = true;
     }
     if (!sortByParam) {
-      updatedSearchParams.set('sortBy', 'popularity');
-      changed = true; 
+      addUrlParam('sortBy', 'popularity');
+      changed = true;
     }
-    if (!productTypeParam) {
-      updatedSearchParams.set('productType', 'anime');
-      changed = true; 
+    if (!pageParam) {
+      addUrlParam('productType', 'anime');
+      changed = true;
     }
+    // addUrlParam('showFilters1', 'false');
+    // addUrlParam('showFilters2', 'true');
     if (changed) {
-      setSearchParams(updatedSearchParams);
-      // console.log('SET DEFAULT PARAMS');
+      setRerender(!rerender);
     }
-  }, [searchParams, pageParam, sortByParam, productTypeParam, setSearchParams]);
+    // console.log(pageParam);
+    // console.log(sortByParam);
+    // console.log(productTypeParam);
+  }, [pageParam, productTypeParam, rerender, searchParams, sortByParam])
 
   useEffect(() => {
-    async function fetchGenresData() {
-      try {
-        let refetch = false;
-        let genresData = null;
-        do {
-          if (refetch) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          }
-          if (productTypeParam && productTypeParam === 'anime') {
-            genresData = await getAnimeGenres();
-            // console.log('got anime genres');
-          } else if (productTypeParam && productTypeParam === 'manga') {
-            genresData = await getMangaGenres();
-            // console.log('got manga genres');
-          }
-          refetch = true;
-          // fetch data again if there is a 429 error
-        } while (genresData && genresData?.status === '429');
-        // console.log(genresData);
-        setGenresData(genresData);
-      } catch (error) {
-        console.log(error);
-        throw new Response("", {
-          status: 429,
-          statusText: "RateLimitException",
-        });
-      }
-    } 
-
-    // console.log('ENTERING FETCH GENRES');
-    // console.log(`productType param: ${productTypeParam}`);
-    
-    if (productTypeParam) {
-      fetchGenresData();
+    if (loaderProductsData) {
+      setProductsData(loaderProductsData);
     }
-    
-    // console.log('LEAVING FETCH GENRES');
+  }, [loaderProductsData])
 
-  }, [productTypeParam]);
+  useEffect(() => {
+    if (loaderGenresData) {
+      setGenresData(loaderGenresData);
+    }
+  }, [loaderGenresData])
+
+  useEffect(() => {
+    // setShowFilters1(loaderShowFilters1);
+    addUrlParam('showFilters1', loaderShowFilters1);
+    console.log('show filters1 changed');
+  }, [loaderShowFilters1]);
   
   useEffect(() => {
-    async function fetchProductsData() {
-      let updatedData = null; 
-      let refetch = false;
-      try {
-        do {
-          if (refetch) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          }
-          // console.log(`filter param: ${filterParams}`)
-          if (productTypeParam === 'anime') {
-            if (sortByParam === 'popularity') {
-              updatedData = await getPopularAnimeInfo(pageParam, filterParams);
-            } else if (sortByParam === 'AZ') {
-              updatedData = await getSortedAZAnimeInfo(pageParam, filterParams);
-            } else if (sortByParam === 'ZA') {
-              updatedData = await getSortedZAAnimeInfo(pageParam, filterParams);
-            } else if (sortByParam === 'newest') {
-              updatedData = await getNewestAnimeInfo(pageParam, filterParams)
-            } else if (sortByParam === 'oldest') {
-              updatedData = await getOldestAnimeInfo(pageParam, filterParams);
-            }
-            // console.log('got anime info!');
-          } else if (productTypeParam === 'manga') {
-            if (sortByParam === 'popularity') {
-              updatedData = await getPopularMangaInfo(pageParam, filterParams);
-            } else if (sortByParam === 'AZ') {
-              updatedData = await getSortedAZMangaInfo(pageParam, filterParams);
-            } else if (sortByParam === 'ZA') {
-              updatedData = await getSortedZAMangaInfo(pageParam, filterParams);
-            } else if (sortByParam === 'newest') {
-              updatedData = await getNewestMangaInfo(pageParam, filterParams)
-            } else if (sortByParam === 'oldest') {
-              updatedData = await getOldestMangaInfo(pageParam, filterParams);
-            }
-            // console.log('got manga info!');
-          }
-          refetch = true;
-          // fetch data again if there is a 429 error
-        } while (updatedData && updatedData?.status === '429');
+    setShowFilters2(loaderShowFilters2);
+    addUrlParam('showFilters2', loaderShowFilters2);
+    console.log('show filters2 changed');
+  }, [loaderShowFilters2]);
 
-        setProductsData(updatedData);
-        setIsLoadingProductsData(false);
-      } catch (error) {
-        setError(true);
-      }
-    }
-    // console.log('ENTERING FETCH PRODUCTS');
-
-    if (!genresData) {
-      return;
-    }
+  useEffect(() => {
     
-    if (pageParam && sortByParam && productTypeParam && !isLoadingProductsData) {
-      setIsLoadingProductsData(true);
-      // setTimeout(() => {
-      fetchProductsData();
-      // }, 2000);
+    console.log('shop component mounted');
+    return () => {
+      console.log('shop component unmounted');
+      sessionStorage.removeItem('useLoader', 'false');
     }
-    // console.log('LEAVING FETCH PRODUCTS');
-
-  }, [searchParams, productTypeParam, pageParam, filterParams, sortByParam, genresData]);
+  }, [])
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
@@ -196,35 +136,9 @@ function Shop() {
       resizeObserver.disconnect();
     };
   }, []);
-  
-  function getFilterParams() {
-    let genreIds = [];
-    if (genresParam && genresData) {
-      genresData.data.forEach((genre) => {
-        if (genresParam.includes(genre.name)) {
-          genreIds.push(genre.mal_id);
-        }
-      });
-    }
-    
-    let filterParams = '';
-    if (searchInputParam && searchInputParam !== '') {
-      filterParams = filterParams.concat(`q=${searchInputParam}&`);
-    }
-    if (genreIds.length > 0) {
-      filterParams = filterParams.concat(`genres=${genreIds}&`);
-    }
-    if (minScoreParam) {
-      filterParams = filterParams.concat(`min_score=${Math.round(minScoreParam*2 + "e+2")  + "e-2"}&`);
-    }
-    if (maxScoreParam) {
-      filterParams = filterParams.concat(`max_score=${maxScoreParam*2}&`);
-    }
-
-    return filterParams;
-  }
 
   function handlePageChange(pageNumber) {
+    sessionStorage.setItem('useLoader', JSON.stringify(['products']));
     setSearchParams((searchParams) => {
       const updatedSearchParams = new URLSearchParams(searchParams);
       updatedSearchParams.set('page', pageNumber.toString());
@@ -242,16 +156,13 @@ function Shop() {
       }])
   }
 
-  if (error) {
-    return <ErrorPage />;
-  }
-  
   return (
     <>
-      {isLoadingProductsData && <LoadingOverlay />}
       <div className={styles.shop}>
         {isSmallScreen &&
-        <p className={styles.back} onClick={() => { navigate(-1) }}>
+        <p className={styles.back} onClick={() => { 
+          navigate(-1) 
+        }}>
           <i className='fa fa-2xs fa-solid fa-arrow-left'></i>
           Back
         </p>}
@@ -259,25 +170,43 @@ function Shop() {
           <div className={styles.topBlock}>
             {!isSmallScreen &&
             <div className={styles.backContainer}>
-              <p className={styles.back} onClick={() => { navigate(-1) }}>
+              <p className={styles.back} onClick={() => { 
+                navigate(-1) 
+              }}>
                 <i className='fa fa-2xs fa-solid fa-arrow-left'></i>
                 Back
               </p>
             </div>}
             <div className={styles.buttonAndSelect}>
+              {isSmallScreen && 
               <button 
                 type='button' 
                 className={styles.filter} 
-                onClick={() => setShowFilters(!showFilters)}
+                onClick={() => {
+                  addUrlParam('showFilters1', !showFilters1);
+                  setShowFilters1(!showFilters1);
+                }}
               >
-                {`${showFilters ? 'Hide' : 'Show'} Filters`}
-              </button>
+                {`${showFilters1 ? 'Hide' : 'Show'} Filters`}
+              </button>}
+              {!isSmallScreen && 
+              <button 
+              type='button' 
+              className={styles.filter} 
+              onClick={() => {
+                addUrlParam('showFilters2', !showFilters2);
+                setShowFilters2(!showFilters2);
+                }}
+              >
+                {`${showFilters2 ? 'Hide' : 'Show'} Filters`}
+              </button>}
               <div className={styles.sortByContainer}>
                 <p>Sort by &nbsp;</p>
                 <select 
                   className={styles.sortBsy}
                   value={sortByParam ? sortByParam : 'popularity'}
                   onChange={(e) => {
+                    sessionStorage.setItem('useLoader', JSON.stringify(['products']));
                     setSearchParams((searchParams) => {
                       const updatedSearchParams = new URLSearchParams(searchParams);
                       updatedSearchParams.set('page', '1');
@@ -292,23 +221,23 @@ function Shop() {
                   <option value="oldest">Oldest to Newest</option>
                 </select>
               </div>
-
             </div>
           </div>
-          {showFilters && isSmallScreen &&
+          {showFilters1 && isSmallScreen &&
           <Filter 
             genresData={genresData ? genresData.data : []} 
           />}
         </div>
         <div className={styles.paginationInfo}>
-          {!isLoadingProductsData && !searchInputParam && <p>Displaying results for all {productTypeParam}</p>}
-          {!isLoadingProductsData && searchInputParam && <p>Displaying results for "{searchInputParam}" for all {productTypeParam}</p>}
-          {!isLoadingProductsData && hasProducts && `Showing ${paginationStartIndex}-${paginationEndIndex} of ${totalItems} Total Products`}
-          {!isLoadingProductsData && !(hasProducts) &&  `No Products Found.`}
-          {isLoadingProductsData && 'Loading Products...'}
+          {productsData && !isLoading && !searchInputParam && <p>Displaying results for all {productTypeParam}</p>}
+          {productsData && !isLoading && searchInputParam && <p>Displaying results for "{searchInputParam}" for all {productTypeParam}</p>}
+          {productsData && !isLoading && hasProducts && `Showing ${paginationStartIndex}-${paginationEndIndex} of ${totalItems} Total Products`}
+          {productsData && !isLoading && !(hasProducts) &&  `No Products Found.`}
+          {/* {isLoading && 'Loading Products...'} */}
+          {/* {isLoading && <LoadingOverlay />} */}
         </div>
         <div className={styles.filterAndItems}>
-          {showFilters && !isSmallScreen &&
+          {showFilters2 && !isSmallScreen &&
           <Filter 
             genresData={genresData ? genresData.data : []} 
           />}
@@ -340,11 +269,10 @@ function Shop() {
             currentPage={Number(pageParam)} 
             onPageChange={handlePageChange}
             customStyles={styles}
-            isLoading = {isLoadingProductsData}
           />}
       </div>
       {hasProducts && documentHeightGreaterThan100vh &&
-        <div ref={backToTopRef} className={styles.backToTop} onClick={() => window.scrollTo({ top: 0})}>Back to top</div>
+        <div className={styles.backToTop} onClick={() => window.scrollTo({ top: 0})}>Back to top</div>
       }
     </>
   )
@@ -385,10 +313,14 @@ function ShopItem({
   return (
     <div className={styles.itemInfoContainer}>
       <div className={styles.itemInfo} data-testid='itemInfo'>
-        <NavLink to={`/products/${productType}/${productId}`}>
+        <NavLink 
+          to={`/products/${productType}/${productId}`} 
+        >
           <img src={productImage} alt="" />
         </NavLink>
-        <NavLink to={`/products/${productType}/${productId}`}>
+        <NavLink 
+          to={`/products/${productType}/${productId}`}
+        >
           <p className={styles.itemTitle}>{productTitle}</p>
         </NavLink>
         <div className={styles.starRatingContainer}>

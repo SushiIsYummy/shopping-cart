@@ -1,6 +1,6 @@
 import styles from './Searchbar.module.css';
 import { capitalize } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { 
   Form,
   useSearchParams,
@@ -26,17 +26,26 @@ function Searchbar({
   
   function handleSubmit(e) {
     e.preventDefault();
+    let updatedSearchParams = new URLSearchParams();
+    updatedSearchParams.set('search', searchbar.current.value);
+    updatedSearchParams.set('productType', selectedProduct);
+    updatedSearchParams.set('searchId', crypto.randomUUID());
+
     if (location.pathname !== '/shop') {
-      navigate('/shop');
+      navigate(`/shop?page=1&sortBy=popularity&${updatedSearchParams}`);
+    } else {
+      setSearchParams((searchParams) => {
+      // console.log(searchParams.toString());
+        return { 
+          ...Object.fromEntries(searchParams),
+          search: searchbar.current.value,
+          productType: selectedProduct,
+          // make it so that even when searching with the same exact inputs,
+          // it will still fetch products data.
+          searchId: crypto.randomUUID(),
+        };
+      })
     }
-    setSearchParams((searchParams) => ({ 
-      ...Object.fromEntries(searchParams),
-      search: searchbar.current.value,
-      productType: selectedProduct,
-      // make it so that even when searching with the same exact inputs,
-      // it will still fetch products data.
-      searchId: crypto.randomUUID(),
-    }));
   }
 
   return (

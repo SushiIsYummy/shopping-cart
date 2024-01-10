@@ -2,7 +2,7 @@ import './ProductInfo.css';
 import { useState } from 'react';
 import { 
   useLoaderData,
-  useNavigate
+  useNavigate,
 } from "react-router-dom";
 import { getAnimeInfo, getMangaInfo } from '../../api';
 import formatPublishDates from '../../utils/formatPublishDates';
@@ -18,6 +18,9 @@ export async function loader({ params }) {
   try {
     let refetch = false;
     do{
+      if (refetch) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
       if (productType === 'anime') {
         productInfo = await getAnimeInfo(params.productId);
       } else if (productType === 'manga') {
@@ -81,7 +84,9 @@ function ProductInfo() {
 
   return (
     <div className="product-info-container">
-      <p className='back' onClick={() => { navigate(-1) }}>
+      <p className='back' onClick={() => { 
+        navigate(-1) 
+      }}>
         <i className='fa fa-2xs fa-solid fa-arrow-left'></i>
         Back
       </p>

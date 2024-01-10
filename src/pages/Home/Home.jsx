@@ -1,6 +1,6 @@
 import Carousel from '../../components/Carousel/Carousel';
 import { 
-  useLoaderData,
+  useLoaderData, useNavigation,
 } from "react-router-dom";
 import './Home.css';
 import { getCurrentSeason, getNewSeasonalAnimeList, getNewSeasonalMangaList } from '../../api';
@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import { useMediaQuery } from '@react-hook/media-query';
+import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 
 export async function loader() {
   try {
@@ -35,10 +36,13 @@ export async function loader() {
 function Home() {
   const useSwiper = useMediaQuery('(max-width: 1200px)');
   const { anime, manga } = useLoaderData();
+  const navigation = useNavigation();
   const currentSeason = getCurrentSeason();
   const currentYear = DateTime.local().year;
+  
   return (
     <div className='home'>
+      {navigation.state === 'loading' && <LoadingOverlay />}
       <section className="anime-and-manga-showcase">
         <div className="featured-anime-and-manga">
           {useSwiper ? ( 

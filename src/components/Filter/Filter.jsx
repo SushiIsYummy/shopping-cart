@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { 
   Form, 
   useSearchParams, 
@@ -16,14 +16,16 @@ function Filter({
     minScore: '',
     maxScore: '',
     productType: '',
+    search: '',
   });
   const [searchParams, setSearchParams] = useSearchParams();
-  
-  const genresParam = searchParams.get('genres');
+  let urlParam = new URLSearchParams(window.location.search);
+  const genresParam = urlParam.get('genres');
+  const searchParam = urlParam.get('search') ?? '';
   const genresList = genresParam ? genresParam.split('_') : [];
-  const productTypeParam = searchParams.get('productType');
-  const minScoreParam = searchParams.get('minScore') ?? '';
-  const maxScoreParam = searchParams.get('maxScore') ?? '';
+  const productTypeParam = urlParam.get('productType');
+  const minScoreParam = urlParam.get('minScore') ?? '';
+  const maxScoreParam = urlParam.get('maxScore') ?? '';
 
   useEffect(() => {
     setFilters((prevFilters) => {
@@ -34,9 +36,10 @@ function Filter({
         productType: productTypeParam ? productTypeParam : '',
         maxScore: maxScoreParam ? maxScoreParam : '',
         minScore: minScoreParam ? minScoreParam : '',
+        search: searchParam ? searchParam : '',
       }
     })
-  }, [genresParam, maxScoreParam, minScoreParam, productTypeParam]);
+  }, [genresParam, maxScoreParam, minScoreParam, productTypeParam, searchParam]);
 
 
   const handleSubmit = (e) => {
@@ -55,8 +58,11 @@ function Filter({
       }
     });
     updatedSearchParams.set('page', '1');
-    setSearchParams(updatedSearchParams);
-    // console.log('FILTERED!')
+
+    if (updatedSearchParams.toString() !== searchParams.toString()) {
+      sessionStorage.setItem('useLoader', JSON.stringify(['products']));
+      setSearchParams(updatedSearchParams);
+    }
   };
 
   const handleReset = () => {
@@ -111,7 +117,8 @@ function Filter({
               value='anime' 
               onChange={(e) => {
                 handleFilterChange('productType', e.target.value);
-                setSearchParams((searchParams) => ({ ...Object.fromEntries(searchParams), productType: e.target.value }));
+                sessionStorage.setItem('useLoader', 'false');
+                setSearchParams((searchParams) => ({ ...Object.fromEntries(searchParams), productType: e.target.value }))
               }}
               checked={filters.productType === 'anime'}  
               />
@@ -124,11 +131,25 @@ function Filter({
               value='manga' 
               onChange={(e) => {
                 handleFilterChange('productType', e.target.value)
+                sessionStorage.setItem('useLoader', 'false');
                 setSearchParams((searchParams) => ({ ...Object.fromEntries(searchParams), productType: e.target.value }));
               }}
               checked={filters.productType === 'manga'}  
             />
             &nbsp;Manga
+          </label>
+        </div>
+      </div>
+      <div className={styles.filterOption}>
+        <div className={styles.categoryHeader} onClick={() => handleCategoryClick('search')}>
+          <div className={styles.category}>Current Search</div>
+          <div className={styles.plusMinus}>{openCategories['search'] ? '-' : '+'}</div>
+        </div>
+        <div className={`${styles.options} ${(openCategories['search'] !== null && !openCategories['search'] && `${styles.hide}`) || ''}`}>
+          <label className={styles.searchTextareaContainer}>
+            {/* Search: &nbsp; */}
+            <textarea className={styles.searchTextarea} value={filters.search} name='search' onChange={(e) => handleFilterChange('search', e.target.value)}/>
+            {filters.search !== searchParam && <span className={styles.unsavedChanges}></span>}
           </label>
         </div>
       </div>
