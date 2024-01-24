@@ -58,7 +58,7 @@ function Shop() {
       addUrlParam('sortBy', 'popularity');
       changed = true;
     }
-    if (!pageParam) {
+    if (!productTypeParam) {
       addUrlParam('productType', 'anime');
       changed = true;
     }

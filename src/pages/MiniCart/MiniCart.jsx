@@ -102,7 +102,7 @@ function MiniCart() {
         ) : (
           <div className={styles.emptyCart}>
             <p>Your Shopping Cart is Empty</p>
-            <NavLink to={`/shop`} onClick={handleNavLinkClick}>
+            <NavLink to={`/shop?page=1&sortBy=popularity&productType=anime`} onClick={handleNavLinkClick}>
               <button>CONTINUE SHOPPING</button>
             </NavLink>
           </div>
